@@ -90,28 +90,32 @@ class PrayerTimePage extends GetView<PrayerTimeController> {
         padding: const EdgeInsets.all(10.0),
         child: Row(
           children: [
-            const Icon(
-              Icons.location_on,
-            ),
+            const Icon(Icons.location_on),
             const Gap(5),
-            FutureBuilder(
-              future: controller.repository.getLocationTextDecoded(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return Text(
-                    snapshot.data!,
-                    textDirection: TextDirection.ltr,
-                  );
-                } else {
-                  return Text(
-                    controller.repository.getLocationTextCoded(),
-                    textDirection: TextDirection.ltr,
-                  );
-                }
-              },
-            )
+            Flexible(  // Wrap with Flexible
+              child: FutureBuilder(
+                future: controller.repository.getLocationTextDecoded(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text(
+                      snapshot.data!,
+                      textDirection: TextDirection.ltr,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    );
+                  } else {
+                    return Text(
+                      controller.repository.getLocationTextCoded(),
+                      textDirection: TextDirection.ltr,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    );
+                  }
+                },
+              ),
+            ),
           ],
-        ),
+        )
       ),
     );
   }

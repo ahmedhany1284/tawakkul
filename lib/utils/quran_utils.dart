@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:status_bar_control/status_bar_control.dart';
+// import 'package:status_bar_control/status_bar_control.dart';
 
 import 'package:tawakkal/constants/urls.dart';
 import 'package:tawakkal/controllers/quran_reading_controller.dart';
@@ -34,7 +34,8 @@ class QuranUtils {
 
   // Get the height of the Quran page header, including status bar and toolbar
   static Future<double> getQuranPageHeaderHeight() async {
-    return kToolbarHeight + await StatusBarControl.getHeight + 5;
+    return kToolbarHeight ;
+    // + await StatusBarControl.getHeight + 5;
   }
 
   // Get the height of the Quran page footer
@@ -156,11 +157,11 @@ class QuranUtils {
   }) async {
     if (force != null && force == true) {
       isFullScreen.value = false;
-      await StatusBarControl.setHidden(false);
+      // await StatusBarControl.setHidden(false);
       return;
     }
     isFullScreen.value = !isFullScreen.value;
-    await StatusBarControl.setHidden(isFullScreen.value);
+    // await StatusBarControl.setHidden(isFullScreen.value);
     // await StatusBarControl.setTranslucent(isFullScreen.value);
   }
 

@@ -49,13 +49,13 @@ class Activites {
       },
       'text': 'العلامات المرجعية',
     },
-    {
-      'icon': FlutterIslamicIcons.qibla2,
-      'onTap': () {
-        Get.toNamed(Routes.QIBLA_PAGE);
-      },
-      'text': 'القبلة',
-    },
+    // {
+    //   'icon': FlutterIslamicIcons.qibla2,
+    //   'onTap': () {
+    //     Get.toNamed(Routes.QIBLA_PAGE);
+    //   },
+    //   'text': 'القبلة',
+    // },
   ];
   static List<Map<String, dynamic>> activities = [
     {
@@ -112,13 +112,13 @@ class Activites {
       },
       'text': 'استغفار',
     },
-    {
-      'icon': FlutterIslamicIcons.qibla2,
-      'onTap': () {
-        Get.toNamed(Routes.QIBLA_PAGE);
-      },
-      'text': 'القبلة',
-    },
+    // {
+    //   'icon': FlutterIslamicIcons.qibla2,
+    //   'onTap': () {
+    //     Get.toNamed(Routes.QIBLA_PAGE);
+    //   },
+    //   'text': 'القبلة',
+    // },
     {
       'icon': FlutterIslamicIcons.quran2,
       'onTap': () {
@@ -126,45 +126,45 @@ class Activites {
       },
       'text': 'الاربعون النووية',
     },
-    {
-      'icon': FlutterIslamicIcons.hadji,
-      'onTap': () {
-        Get.toNamed(
-          Routes.AZKAR_DETAILS,
-          arguments: {
-            'pageTitle': 'ادعية الانبياء',
-            'type': AzkarPageType.prophetDua
-          },
-        );
-      },
-      'text': 'ادعية الأنبياء',
-    },
-    {
-      'icon': FlutterIslamicIcons.prayingPerson,
-      'onTap': () {
-        Get.toNamed(
-          Routes.AZKAR_DETAILS,
-          arguments: {
-            'pageTitle': 'ادعية نبوية',
-            'type': AzkarPageType.pDua,
-          },
-        );
-      },
-      'text': 'ادعية نبوية',
-    },
-    {
-      'icon': FlutterIslamicIcons.quran,
-      'onTap': () {
-        Get.toNamed(
-          Routes.AZKAR_DETAILS,
-          arguments: {
-            'pageTitle': 'ادعية قرآنية',
-            'type': AzkarPageType.quranDua
-          },
-        );
-      },
-      'text': 'ادعية قرآنية',
-    },
+    // {
+    //   'icon': FlutterIslamicIcons.hadji,
+    //   'onTap': () {
+    //     Get.toNamed(
+    //       Routes.AZKAR_DETAILS,
+    //       arguments: {
+    //         'pageTitle': 'ادعية الانبياء',
+    //         'type': AzkarPageType.prophetDua
+    //       },
+    //     );
+    //   },
+    //   'text': 'ادعية الأنبياء',
+    // },
+    // {
+    //   'icon': FlutterIslamicIcons.prayingPerson,
+    //   'onTap': () {
+    //     Get.toNamed(
+    //       Routes.AZKAR_DETAILS,
+    //       arguments: {
+    //         'pageTitle': 'ادعية نبوية',
+    //         'type': AzkarPageType.pDua,
+    //       },
+    //     );
+    //   },
+    //   'text': 'ادعية نبوية',
+    // },
+    // {
+    //   'icon': FlutterIslamicIcons.quran,
+    //   'onTap': () {
+    //     Get.toNamed(
+    //       Routes.AZKAR_DETAILS,
+    //       arguments: {
+    //         'pageTitle': 'ادعية قرآنية',
+    //         'type': AzkarPageType.quranDua
+    //       },
+    //     );
+    //   },
+    //   'text': 'ادعية قرآنية',
+    // },
     {
       'icon': FluentIcons.bookmark_search_20_regular,
       'onTap': () {

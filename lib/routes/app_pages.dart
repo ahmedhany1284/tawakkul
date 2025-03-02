@@ -99,11 +99,11 @@ class AppPages {
       page: () => const QuranSettingsPage(),
       binding: QuranSettingsBinding(),
     ),
-    GetPage(
-      name: _Paths.QIBLA_PAGE,
-      page: () => const QiblaPage(),
-      binding: QiblaPageBinding(),
-    ),
+    // GetPage(
+    //   name: _Paths.QIBLA_PAGE,
+    //   page: () => const QiblaPage(),
+    //   binding: QiblaPageBinding(),
+    // ),
     GetPage(
       name: _Paths.ASMAULLAH_PAGE,
       page: () => const AsmaullahPageView(),

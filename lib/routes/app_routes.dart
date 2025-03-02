@@ -18,7 +18,7 @@ abstract class Routes {
   static const AUDIO_PLAYER_CONTROLS = _Paths.AUDIO_PLAYER_CONTROLS;
   static const AUDIO_SETTINGS = _Paths.AUDIO_SETTINGS;
   static const QURAN_DISPLAY_SETTINGS = _Paths.QURAN_DISPLAY_SETTINGS;
-  static const QIBLA_PAGE = _Paths.QIBLA_PAGE;
+  // static const QIBLA_PAGE = _Paths.QIBLA_PAGE;
   static const ASMAULLAH_PAGE = _Paths.ASMAULLAH_PAGE;
   static const AZKAR_DETAILS = _Paths.AZKAR_DETAILS;
   static const AZKAR_CATEGORIES = _Paths.AZKAR_CATEGORIES;

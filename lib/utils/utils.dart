@@ -4,7 +4,7 @@ import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_qiblah/flutter_qiblah.dart';
+// import 'package:flutter_qiblah/flutter_qiblah.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:jhijri/jHijri.dart';
@@ -80,43 +80,43 @@ class Utils {
   }
 
   /// get location status: GPS enabled and the permission status with GeolocationStatus
-  static Future<LocationStatus> checkLocationStatus() async {
-    final status = await Geolocator.checkPermission();
-    final enabled = await Geolocator.isLocationServiceEnabled();
-    return LocationStatus(enabled, status);
-  }
-
-  // Method to check and handle location status
-  static Future<LocationStatus> handleLocationStatus() async {
-    // Check current location status
-    final locationStatus = await Utils.checkLocationStatus();
-
-    // If location is not enabled, open location settings and update status
-    if (!locationStatus.enabled) {
-      await Geolocator.openLocationSettings();
-      final updatedStatus = await Utils.checkLocationStatus();
-      return updatedStatus;
-    }
-
-    // If location is enabled but permission is denied, request permission and handle accordingly
-    if (locationStatus.enabled &&
-        locationStatus.status == LocationPermission.denied) {
-      await Geolocator.requestPermission();
-      var updatedStatus = await Utils.checkLocationStatus();
-
-      if (updatedStatus.status == LocationPermission.denied) {
-        // If permission is still denied, open app settings
-        await Geolocator.openAppSettings();
-      }
-
-      // Check location status again and update the stream
-      updatedStatus = await Utils.checkLocationStatus();
-      return updatedStatus;
-    } else {
-      // If location is enabled and permission is granted, update the stream
-      return locationStatus;
-    }
-  }
+  // static Future<LocationStatus> checkLocationStatus() async {
+  //   final status = await Geolocator.checkPermission();
+  //   final enabled = await Geolocator.isLocationServiceEnabled();
+  //   return LocationStatus(enabled, status);
+  // }
+  //
+  // // Method to check and handle location status
+  // static Future<LocationStatus> handleLocationStatus() async {
+  //   // Check current location status
+  //   final locationStatus = await Utils.checkLocationStatus();
+  //
+  //   // If location is not enabled, open location settings and update status
+  //   if (!locationStatus.enabled) {
+  //     await Geolocator.openLocationSettings();
+  //     final updatedStatus = await Utils.checkLocationStatus();
+  //     return updatedStatus;
+  //   }
+  //
+  //   // If location is enabled but permission is denied, request permission and handle accordingly
+  //   if (locationStatus.enabled &&
+  //       locationStatus.status == LocationPermission.denied) {
+  //     await Geolocator.requestPermission();
+  //     var updatedStatus = await Utils.checkLocationStatus();
+  //
+  //     if (updatedStatus.status == LocationPermission.denied) {
+  //       // If permission is still denied, open app settings
+  //       await Geolocator.openAppSettings();
+  //     }
+  //
+  //     // Check location status again and update the stream
+  //     updatedStatus = await Utils.checkLocationStatus();
+  //     return updatedStatus;
+  //   } else {
+  //     // If location is enabled and permission is granted, update the stream
+  //     return locationStatus;
+  //   }
+  // }
 
   static String formatDurationToArabic(Duration duration) {
     final hours = duration.inHours;
