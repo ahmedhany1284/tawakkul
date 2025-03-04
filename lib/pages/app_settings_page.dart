@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:tawakkal/data/cache/app_settings_cache.dart';
 import 'package:tawakkal/pages/azkar_settings_page.dart';
 import 'package:tawakkal/pages/prayer_settings_page.dart';
+import 'package:tawakkal/pages/quran_overlay_settings.dart';
 import 'package:tawakkal/routes/app_pages.dart';
 import 'package:tawakkal/utils/utils.dart';
 
@@ -41,6 +42,19 @@ class AppSettingsPage extends GetView {
             ),
             subtitle: Text(
               Utils.themeModeToArabicText(AppSettingsCache.getThemeMode()),
+              style: subtitleTextStyle,
+            ),
+            dense: true,
+          ),
+          ListTile(
+            leading: const Icon(FluentIcons.timer_16_regular),
+            onTap: () => Get.to(() => const QuranBackgroundSettingsPage()),
+            title: Text(
+              'تنبيهات الآيات',
+              style: titleTextStyle,
+            ),
+            subtitle: Text(
+              'إعدادات عرض الآيات في الخلفية',
               style: subtitleTextStyle,
             ),
             dense: true,

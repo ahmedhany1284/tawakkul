@@ -67,6 +67,7 @@ dependencies:
   flutter_overlay_window: ^0.4.5
   live_activities: ^2.3.0
   workmanager: ^0.5.2
+  numberpicker: ^2.1.2
 dev_dependencies: 
   flutter_test: 
     sdk: flutter
@@ -81,7 +82,8 @@ flutter:
     - assets/svg/
     - assets/databases/
     - assets/jsons/
-    - assets/jsons/lottie/ 
+    - assets/jsons/lottie/
+    - assets/surah/
   uses-material-design: true
   fonts: 
     - family: Uthmanic_Script

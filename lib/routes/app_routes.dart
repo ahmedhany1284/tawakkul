@@ -24,6 +24,7 @@ abstract class Routes {
   static const AZKAR_CATEGORIES = _Paths.AZKAR_CATEGORIES;
   static const ELECTRONIC_TASBIH = _Paths.ELECTRONIC_TASBIH;
   static const QURAN_SEARCH_VIEW = _Paths.QURAN_SEARCH_VIEW;
+  static const QURAN_BACKGROUND_SETTINGS = _Paths.QURAN_BACKGROUND_SETTINGS;
 }
 
 abstract class _Paths {
@@ -48,4 +49,5 @@ abstract class _Paths {
   static const AZKAR_CATEGORIES = '/azkar-categories';
   static const ELECTRONIC_TASBIH = '/electronic-tasbih';
   static const QURAN_SEARCH_VIEW = '/quran-search-view';
+  static const QURAN_BACKGROUND_SETTINGS = '/quran_background_settings';
 }

@@ -1,9 +1,11 @@
 // ignore_for_file: constant_identifier_names
 import 'package:get/get.dart';
 import 'package:tawakkal/bindings/e_tasbih_binding.dart';
+import 'package:tawakkal/bindings/quran_overlay_binding.dart';
 import 'package:tawakkal/bindings/quran_search_binding.dart';
 import 'package:tawakkal/pages/azkar_categories_page.dart';
 import 'package:tawakkal/pages/e_tasbih_page.dart';
+import 'package:tawakkal/pages/quran_overlay_settings.dart';
 import 'package:tawakkal/views/quran_bookmarks_view.dart';
 import 'package:tawakkal/views/quran_search_view.dart';
 
@@ -68,6 +70,11 @@ class AppPages {
       name: _Paths.QURAN_READING_PAGE,
       page: () => const QuranReadingPage(),
       binding: QuranReadingPageBinding(),
+    ),
+    GetPage(
+      name: Routes.QURAN_BACKGROUND_SETTINGS,
+      page: () => const QuranBackgroundSettingsPage(),
+      binding: QuranBackgroundSettingsBinding(),
     ),
     GetPage(
       name: _Paths.TAFSIR_DOWNLOAD_MANAGER,

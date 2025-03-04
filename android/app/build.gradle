@@ -39,8 +39,9 @@ def keystoreProperties = new Properties()
 
 android {
     namespace "com.tawakkal.tawakkal"
-    compileSdkVersion flutter.compileSdkVersion
+    compileSdkVersion 35//flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
+
 
     compileOptions {
       
@@ -63,10 +64,13 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 23 
-        compileSdkVersion 34
+        compileSdkVersion 35
         targetSdkVersion flutter.targetSdkVersion
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+    }
+    buildFeatures {
+        viewBinding true
     }
 
     signingConfigs {
@@ -87,5 +91,14 @@ android {
 
 flutter {
     source '../..'
+}
+
+dependencies {
+    implementation 'androidx.window:window:1.0.0'
+    implementation 'androidx.window:window-java:1.0.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.annotation:annotation:1.2.0'
+
+
 }
 
