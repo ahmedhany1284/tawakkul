@@ -1,3 +1,4 @@
+import 'package:get_storage/get_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawakkal/utils/quran_utils.dart';
 import '../../constants/cache_keys.dart';
@@ -92,5 +93,49 @@ class QuranSettingsCache {
 
   static double getStatusBarHeight() {
     return prefs.getDouble(headerHeightKey)!;
+  }
+
+
+  /// Overlay Settings Cache Methods
+
+  static void setOverlayEnabled({required bool isEnabled}) {
+    GetStorage().write('quran_overlay_enabled', isEnabled);
+  }
+
+  static void setOverlayMode({required bool isPageMode}) {
+    GetStorage().write('quran_overlay_page_mode', isPageMode);
+  }
+
+  static void setOverlayNumberOfAyat({required int numberOfAyat}) {
+    GetStorage().write('quran_overlay_ayat_count', numberOfAyat);
+  }
+
+  static void setOverlayInterval({required int intervalMinutes}) {
+    GetStorage().write('quran_overlay_interval', intervalMinutes);
+  }
+
+  static void setLastDisplayedAyatIndex({required int index}) {
+    GetStorage().write('quran_overlay_last_ayat_index', index);
+  }
+
+  // Getters for Overlay Settings
+  static bool isOverlayEnabled() {
+    return GetStorage().read('quran_overlay_enabled') ?? false;
+  }
+
+  static bool isOverlayPageMode() {
+    return GetStorage().read('quran_overlay_page_mode') ?? false;
+  }
+
+  static int getOverlayNumberOfAyat() {
+    return GetStorage().read('quran_overlay_ayat_count') ?? 5;
+  }
+
+  static int getOverlayInterval() {
+    return GetStorage().read('quran_overlay_interval') ?? 10;
+  }
+
+  static int getLastDisplayedAyatIndex() {
+    return GetStorage().read('quran_overlay_last_ayat_index') ?? 0;
   }
 }

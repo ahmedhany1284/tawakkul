@@ -47,19 +47,6 @@ class AppSettingsPage extends GetView {
             dense: true,
           ),
           ListTile(
-            leading: const Icon(FluentIcons.timer_16_regular),
-            onTap: () => Get.to(() => const QuranBackgroundSettingsPage()),
-            title: Text(
-              'تنبيهات الآيات',
-              style: titleTextStyle,
-            ),
-            subtitle: Text(
-              'إعدادات عرض الآيات في الخلفية',
-              style: subtitleTextStyle,
-            ),
-            dense: true,
-          ),
-          ListTile(
             leading: const Icon(Icons.app_settings_alt_rounded),
             onTap: () => Get.toNamed(Routes.QURAN_DISPLAY_SETTINGS),
             title: Text(

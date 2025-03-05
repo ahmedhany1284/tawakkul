@@ -72,11 +72,6 @@ class AppPages {
       binding: QuranReadingPageBinding(),
     ),
     GetPage(
-      name: Routes.QURAN_BACKGROUND_SETTINGS,
-      page: () => const QuranBackgroundSettingsPage(),
-      binding: QuranBackgroundSettingsBinding(),
-    ),
-    GetPage(
       name: _Paths.TAFSIR_DOWNLOAD_MANAGER,
       page: () => const TafsirDownloadManagerPage(),
       binding: TafsirDownloadManagerBinding(),
