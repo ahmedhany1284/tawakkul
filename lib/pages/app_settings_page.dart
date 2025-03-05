@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:tawakkal/data/cache/app_settings_cache.dart';
 import 'package:tawakkal/pages/azkar_settings_page.dart';
 import 'package:tawakkal/pages/prayer_settings_page.dart';
-import 'package:tawakkal/pages/quran_overlay_settings.dart';
 import 'package:tawakkal/routes/app_pages.dart';
 import 'package:tawakkal/utils/utils.dart';
 

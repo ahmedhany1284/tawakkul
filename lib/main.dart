@@ -1,11 +1,8 @@
-import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:tawakkal/constants/constants.dart';
@@ -15,8 +12,6 @@ import 'package:tawakkal/data/cache/app_settings_cache.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:tawakkal/data/models/quran_verse_model.dart';
 import 'package:tawakkal/services/quran_overlay_service.dart';
-import 'package:tawakkal/utils/quran_utils.dart';
-import 'package:tawakkal/widgets/quran_overlay_widget.dart';
 import 'constants/themes.dart';
 import 'routes/app_pages.dart';
 import 'services/shared_preferences_service.dart';
@@ -77,10 +72,8 @@ void main() async {
 void overlayMain() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  print("Overlay Main Started");
 
   FlutterOverlayWindow.overlayListener.listen((event) async {
-    print("Received overlay event: $event");
 
     if (event != null) {
       try {
@@ -108,7 +101,7 @@ void overlayMain() {
           );
         }
       } catch (e) {
-        print("Error in overlay: $e");
+
       }
     }
   });

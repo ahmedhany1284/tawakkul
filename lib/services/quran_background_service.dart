@@ -1,28 +1,17 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart' as overlay;
-import 'package:get/get.dart';
-import 'package:tawakkal/data/models/quran_navigation_data_model.dart';
 import 'package:tawakkal/data/models/quran_page.dart';
 import 'package:tawakkal/data/models/quran_verse_model.dart';
 import 'package:tawakkal/data/repository/quran_repository.dart';
-import 'package:tawakkal/routes/app_pages.dart';
-import 'package:tawakkal/services/shared_preferences_service.dart';
 import 'package:tawakkal/utils/quran_utils.dart';
-import 'package:tawakkal/widgets/quran_overlay_widget.dart';
 
 import '../data/cache/quran_settings_cache.dart';
 
-import 'dart:async';
-import 'dart:math';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 
 class QuranBackgroundService {
@@ -139,18 +128,13 @@ class QuranBackgroundService {
         final pageNumber = random.nextInt(604) + 1; // Adjust range if needed
         final pageData = await quranRepo.getQuranPageData(pageNumber: pageNumber);
 
-        if (pageData != null) {
-          if (getDisplayType() == DISPLAY_TYPE_PAGE) {
-            await showOverlay(pageData: pageData);
-          } else {
-            final verse = pageData.verses[random.nextInt(pageData.verses.length)];
-            await showOverlay(verse: verse);
-          }
+        if (getDisplayType() == DISPLAY_TYPE_PAGE) {
+          await showOverlay(pageData: pageData);
         } else {
-          print("Page data is null. Check QuranRepository.");
+          final verse = pageData.verses[random.nextInt(pageData.verses.length)];
+          await showOverlay(verse: verse);
         }
-      } catch (e) {
-        print('Error showing initial overlay: $e');
+            } catch (e) {
       }
     }
 
@@ -162,19 +146,14 @@ class QuranBackgroundService {
           final pageNumber = random.nextInt(604) + 1;
           final pageData = await quranRepo.getQuranPageData(pageNumber: pageNumber);
 
-          if (pageData != null) {
-            if (getDisplayType() == DISPLAY_TYPE_PAGE) {
-              await showOverlay(pageData: pageData);
-            } else {
-              final verse = pageData.verses[random.nextInt(pageData.verses.length)];
-              await showOverlay(verse: verse);
-            }
+          if (getDisplayType() == DISPLAY_TYPE_PAGE) {
+            await showOverlay(pageData: pageData);
           } else {
-            print("Page data is null in timer. Check QuranRepository.");
+            final verse = pageData.verses[random.nextInt(pageData.verses.length)];
+            await showOverlay(verse: verse);
           }
-        }
+                }
       } catch (e) {
-        print('Error in overlay timer: $e');
       }
     });
 
@@ -274,20 +253,16 @@ class QuranBackgroundService {
         overlayContent: overlayContent,
       );
     } catch (e) {
-      print('Error showing overlay: $e');
     }
   }
 
   /// Test Functions
   static Future<void> showTestOverlay() async {
     try {
-      print('Starting test overlay...');
 
       if (!await FlutterOverlayWindow.isPermissionGranted()) {
-        print('Requesting permission...');
         final hasPermission = await FlutterOverlayWindow.requestPermission();
         if (!hasPermission!) {
-          print('Permission denied');
           return;
         }
       }
@@ -297,10 +272,8 @@ class QuranBackgroundService {
         await FlutterOverlayWindow.closeOverlay();
         await Future.delayed(const Duration(milliseconds: 500));
       } catch (e) {
-        print('Error closing existing overlay: $e');
       }
 
-      print('Creating overlay content...');
 
       String overlayContent = '''
       <!DOCTYPE html>
@@ -347,7 +320,6 @@ class QuranBackgroundService {
       </html>
     ''';
 
-      print('Showing overlay...');
 
       await FlutterOverlayWindow.showOverlay(
         enableDrag: true,
@@ -359,29 +331,23 @@ class QuranBackgroundService {
         flag: OverlayFlag.defaultFlag ,
       );
 
-      print('Waiting to verify overlay...');
       await Future.delayed(const Duration(seconds: 1));
 
       final isActive = await FlutterOverlayWindow.isActive();
-      print('Overlay active after show: $isActive');
 
       // Auto close after 5 seconds
       await Future.delayed(const Duration(seconds: 5));
       await FlutterOverlayWindow.closeOverlay();
 
     } catch (e) {
-      print('Error showing overlay: $e');
     }
   }
   static Future<void> checkOverlayStatus() async {
     try {
       final isPermissionGranted = await FlutterOverlayWindow.isPermissionGranted();
-      print('Permission granted: $isPermissionGranted');
 
       final isActive = await FlutterOverlayWindow.isActive();
-      print('Overlay active: $isActive');
     } catch (e) {
-      print('Error checking overlay status: $e');
     }
   }
 
@@ -414,7 +380,6 @@ class QuranBackgroundService {
       ''',
       );
     } catch (e) {
-      print('Error in simple overlay: $e');
     }
   }
 
@@ -429,7 +394,6 @@ class QuranBackgroundService {
     try {
       return await FlutterBackgroundService().startService();
     } catch (e) {
-      print('Error starting service: $e');
       return false;
     }
   }
@@ -438,7 +402,6 @@ class QuranBackgroundService {
     try {
       FlutterBackgroundService().invoke('stopService');
     } catch (e) {
-      print('Error stopping service: $e');
     }
   }
 }

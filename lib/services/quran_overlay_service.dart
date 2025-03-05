@@ -6,25 +6,20 @@ import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:get/get.dart';
-import 'package:live_activities/live_activities.dart';
 import 'package:tawakkal/controllers/quran_reading_controller.dart';
 import 'package:tawakkal/controllers/quran_settings_controller.dart';
 import 'package:tawakkal/data/cache/quran_overlay_cache.dart';
 import 'package:tawakkal/data/cache/quran_settings_cache.dart';
 import 'package:tawakkal/data/models/quran_verse_model.dart';
-import 'package:tawakkal/widgets/quran_overlay_widget.dart';
 
-import 'dart:async';
 import 'dart:io';
 
-import 'package:workmanager/workmanager.dart';
 
 class QuranOverlayService extends GetxService with WidgetsBindingObserver {
   // MARK: - Properties
   static QuranOverlayService get instance => Get.find<QuranOverlayService>();
   static const platform = MethodChannel('com.quran.khatma/overlay');
   Timer? _timer;
-  bool _hasOverlayPermission = false;
   bool _isServiceEnabled = false;
   QuranReadingController? _quranController;
   final _overlayController = StreamController<List<String>>.broadcast();
@@ -53,7 +48,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
     try {
       _quranController = Get.find<QuranReadingController>();
     } catch (e) {
-      print('QuranReadingController not available yet');
     }
     await _initializeBackgroundService();
     await _loadInitialState();
@@ -64,7 +58,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
     try {
       _isServiceEnabled = QuranSettingsCache.isOverlayEnabled();
     } catch (e) {
-      print('Error loading initial state: $e');
     }
   }
 
@@ -107,7 +100,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       hasPermission = await FlutterOverlayWindow.isPermissionGranted();
 
       if (!hasPermission) {
-        print("Overlay permission not granted");
         Get.snackbar(
           'تنبيه',
           'يجب السماح بعرض النوافذ المنبثقة للتطبيق',
@@ -154,13 +146,11 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       _isServiceEnabled = false;
       await QuranOverlayCache.setOverlayEnabled(false);
     } catch (e) {
-      print('Error stopping service: $e');
     }
   }
 
   // MARK: - Overlay Display
   Future<void> showOverlay() async {
-    print("ShowOverlay Method Called");
     if (!await _ensurePermission()) return;
 
     try {
@@ -174,7 +164,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
         await _showAyatOverlay(settings);
       }
     } catch (e) {
-      print("Error in showOverlay: $e");
     }
   }
 
@@ -226,7 +215,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
         }
       });
     } catch (e) {
-      print("Error in _showPageOverlay: $e");
     }
   }
 
@@ -330,7 +318,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       ) async {
     try {
       if (_quranController == null) {
-        print('QuranReadingController not available');
         return [];
       }
 
@@ -364,7 +351,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
 
       return verses;
     } catch (e) {
-      print('Error getting verses: $e');
       return [];
     }
   }
@@ -379,7 +365,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
             startService();
           }
         } catch (e) {
-          print('Error in lifecycle state change: $e');
         }
         break;
       case AppLifecycleState.paused:
@@ -395,7 +380,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
 
   Future<void> _checkPermission() async {
     if (Platform.isAndroid) {
-      _hasOverlayPermission = await FlutterOverlayWindow.isPermissionGranted();
     }
   }
 }

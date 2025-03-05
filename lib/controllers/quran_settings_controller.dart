@@ -108,15 +108,12 @@ class QuranSettingsController extends GetxController {
 
   // Updated onOverlayEnabledChanged to handle service restart
   Future<void> onOverlayEnabledChanged(bool value) async {
-    print("Overlay Enable Changed: $value");
     if (value) {
       bool hasPermission = await FlutterOverlayWindow.isPermissionGranted();
-      print("Initial Permission Status: $hasPermission");
 
       if (!hasPermission) {
         await FlutterOverlayWindow.requestPermission();
         hasPermission = await FlutterOverlayWindow.isPermissionGranted();
-        print("Permission Status After Request: $hasPermission");
       }
 
       if (hasPermission) {
@@ -125,7 +122,6 @@ class QuranSettingsController extends GetxController {
         settingsModel.overlaySettings.lastDisplayedAyatIndex = 0;
         settingsModel.overlaySettings.lastDisplayedPageNumber = 0;
         await _overlayService.startService();
-        print("Service Started");
       } else {
         Get.snackbar(
           'تنبيه',
@@ -137,7 +133,6 @@ class QuranSettingsController extends GetxController {
     } else {
       settingsModel.overlaySettings.isEnabled = false;
       await _overlayService.stopService();
-      print("Service Stopped");
     }
 
     await _updateSettingsCache();
@@ -192,15 +187,12 @@ class QuranSettingsController extends GetxController {
   }
 
   Future<void> testOverlay() async {
-    print("Test Overlay Called");
     try {
       bool hasPermission = await FlutterOverlayWindow.isPermissionGranted();
-      print("Permission Status for Test: $hasPermission");
 
       if (!hasPermission) {
         await FlutterOverlayWindow.requestPermission();
         hasPermission = await FlutterOverlayWindow.isPermissionGranted();
-        print("Permission Status After Request: $hasPermission");
       }
 
       if (!hasPermission) {
@@ -213,16 +205,13 @@ class QuranSettingsController extends GetxController {
       }
 
       bool isActive = await FlutterOverlayWindow.isActive();
-      print("Is Overlay Active: $isActive");
 
       if (isActive) {
         await FlutterOverlayWindow.closeOverlay();
       }
 
       await _overlayService.showOverlay();
-      print("Show Overlay Called");
     } catch (e) {
-      print("Error in testOverlay: $e");
       Get.snackbar(
         'خطأ',
         'حدث خطأ أثناء عرض التذكير',
