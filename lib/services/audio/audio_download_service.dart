@@ -10,11 +10,9 @@ import 'package:tawakkal/constants/urls.dart';
 class AudioDownloadService {
   final Dio _dio = Dio();
 
-  Future<void> deleteSurah(
-      {required int surahId, required String reader}) async {
+  Future<void> deleteSurah({required int surahId, required String reader}) async {
     final appDocumentsDirectory = await getApplicationDocumentsDirectory();
-    final surahFolder =
-        '${appDocumentsDirectory.path}/downloaded_content/audio/$reader/$surahId/';
+    final surahFolder = '${appDocumentsDirectory.path}/downloaded_content/audio/$reader/$surahId/';
     final dir = Directory(surahFolder);
     if (dir.existsSync()) {
       dir.deleteSync(recursive: true);
@@ -28,8 +26,7 @@ class AudioDownloadService {
     }
   }
 
-  Future<bool> downloadFile(
-      {required url, required String saveLocation}) async {
+  Future<bool> downloadFile({required url, required String saveLocation}) async {
     // check if file exist first
     if (await File(saveLocation).exists()) {
       // return file is downloaded before
@@ -39,8 +36,7 @@ class AudioDownloadService {
     try {
       await _dio.download(url, saveLocation);
       // Rename the temporary file to the final destination
-      File(saveLocation)
-          .renameSync('${path.dirname(saveLocation)}/${path.basename(url)}');
+      File(saveLocation).renameSync('${path.dirname(saveLocation)}/${path.basename(url)}');
       // return the file successfully downloaded
       return true;
     } catch (e) {
@@ -58,8 +54,7 @@ class AudioDownloadService {
     try {
       // Get the application's document directory for storing downloaded files
       final appDocumentsDirectory = await getApplicationDocumentsDirectory();
-      final surahFolder =
-          '${appDocumentsDirectory.path}/downloaded_content/audio/$readerName/$chapterId/';
+      final surahFolder = '${appDocumentsDirectory.path}/downloaded_content/audio/$readerName/$chapterId/';
 
       int downloadedVerses = 0;
       final totalVerses = getVerseCount(chapterId);
@@ -67,8 +62,7 @@ class AudioDownloadService {
       for (var verseId = 1; verseId <= totalVerses; verseId++) {
         final url =
             '${Urls.audioUrl}$readerName/${chapterId.toString().padLeft(3, '0')}${verseId.toString().padLeft(3, '0')}.mp3';
-        final savePath =
-            '$surahFolder${path.basenameWithoutExtension(url)}.mp3';
+        final savePath = '$surahFolder${path.basenameWithoutExtension(url)}.mp3';
 
         final existFile = File(savePath);
         if (await existFile.exists()) {

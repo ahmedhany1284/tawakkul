@@ -9,8 +9,7 @@ import '../../../../../data/repository/readers_repository.dart';
 import '../../../../../widgets/custom_progress_indicator.dart';
 import '../controllers/quran_audio_download_manager_controller.dart';
 
-class QuranAudioDownloadManagerPage
-    extends GetView<QuranAudioDownloadManagerController> {
+class QuranAudioDownloadManagerPage extends GetView<QuranAudioDownloadManagerController> {
   const QuranAudioDownloadManagerPage({super.key});
 
   @override
@@ -107,8 +106,7 @@ class QuranAudioDownloadManagerPage
                     visualDensity: VisualDensity.compact,
                   ),
                   onPressed: () {
-                    controller.onDownloadAllPressed(
-                        reader: controller.readers[readerIndex]);
+                    controller.onDownloadAllPressed(reader: controller.readers[readerIndex]);
                   },
                   child: Text(
                     'تحميل الكل', // Updated button text for English
@@ -129,8 +127,7 @@ class QuranAudioDownloadManagerPage
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Text(
-        controller
-            .readers[readerIndex].englishName, // Updated label for English
+        controller.readers[readerIndex].englishName, // Updated label for English
         style: Theme.of(context).textTheme.labelMedium,
       ),
     );
@@ -143,43 +140,39 @@ class QuranAudioDownloadManagerPage
       var controllers = ExpandableController.of(context, required: true)!;
       return controllers.expanded
           ? FutureBuilder(
-        future: ReadersRepository().getSurahDownloadData(
-            reader: controller.readers[readerIndex]),
-        builder: (context, surahData) {
-          if (surahData.connectionState == ConnectionState.waiting) {
-            // Show a loading indicator while data is being fetched
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: CustomCircularProgressIndicator(),
-            );
-          } else {
-            if (controller.readers[readerIndex].surahs == null) {
-              controller.readers[readerIndex].surahs = surahData.data!;
-            }
-            return CustomScrollView(
-              primary: false,
-              shrinkWrap: true,
-              slivers: [
-                SliverList.builder(
-                  itemCount: 114,
-                  itemBuilder: (context, chapterId) {
-                    var surah = controller
-                        .readers[readerIndex].surahs![chapterId];
-                    return _buildChapterContent(
-                        context, surah, readerIndex);
-                  },
-                ),
-              ],
-            );
-          }
-        },
-      )
+              future: ReadersRepository().getSurahDownloadData(reader: controller.readers[readerIndex]),
+              builder: (context, surahData) {
+                if (surahData.connectionState == ConnectionState.waiting) {
+                  // Show a loading indicator while data is being fetched
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: CustomCircularProgressIndicator(),
+                  );
+                } else {
+                  if (controller.readers[readerIndex].surahs == null) {
+                    controller.readers[readerIndex].surahs = surahData.data!;
+                  }
+                  return CustomScrollView(
+                    primary: false,
+                    shrinkWrap: true,
+                    slivers: [
+                      SliverList.builder(
+                        itemCount: 114,
+                        itemBuilder: (context, chapterId) {
+                          var surah = controller.readers[readerIndex].surahs![chapterId];
+                          return _buildChapterContent(context, surah, readerIndex);
+                        },
+                      ),
+                    ],
+                  );
+                }
+              },
+            )
           : const SizedBox();
     });
   }
 
-  Widget _buildChapterContent(
-      BuildContext context, DownloadSurahModel surah, int readerIndex) {
+  Widget _buildChapterContent(BuildContext context, DownloadSurahModel surah, int readerIndex) {
     // Content for each chapter (Surah)
     return Column(
       children: [
@@ -206,43 +199,37 @@ class QuranAudioDownloadManagerPage
                 Obx(() {
                   return !surah.isDownloaded.value
                       ? !surah.isDownloading.value
-                      ? surah.isPending.value
-                      ? const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text('قيد الانتظار'),
-                  )
+                          ? surah.isPending.value
+                              ? const Padding(
+                                  padding: EdgeInsets.all(10.0),
+                                  child: Text('قيد الانتظار'),
+                                )
+                              : IconButton(
+                                  style: IconButton.styleFrom(visualDensity: VisualDensity.compact),
+                                  onPressed: () async {
+                                    controller.onSurahDownloadPressed(readerIndex: readerIndex, surah: surah);
+                                  },
+                                  icon: Icon(
+                                    Iconsax.arrow_down_2,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                )
+                          : Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                '% ${ArabicNumbers().convert(surah.downloadProgress.value)}',
+                              ),
+                            )
                       : IconButton(
-                    style: IconButton.styleFrom(
-                        visualDensity: VisualDensity.compact),
-                    onPressed: () async {
-                      controller.onSurahDownloadPressed(
-                          readerIndex: readerIndex, surah: surah);
-                    },
-                    icon: Icon(
-                      Iconsax.arrow_down_2,
-                      color:
-                      Theme.of(context).colorScheme.primary,
-                    ),
-                  )
-                      : Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      '% ${ArabicNumbers().convert(surah.downloadProgress.value)}',
-                    ),
-                  )
-                      : IconButton(
-                    style: IconButton.styleFrom(
-                        visualDensity: VisualDensity.compact),
-                    onPressed: () async {
-                      controller.onDeleteSurah(
-                          surah: surah,
-                          reader: controller.readers[readerIndex]);
-                    },
-                    icon: Icon(
-                      Iconsax.minus_cirlce,
-                      color: Theme.of(context).colorScheme.error,
-                    ),
-                  );
+                          style: IconButton.styleFrom(visualDensity: VisualDensity.compact),
+                          onPressed: () async {
+                            controller.onDeleteSurah(surah: surah, reader: controller.readers[readerIndex]);
+                          },
+                          icon: Icon(
+                            Iconsax.minus_cirlce,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        );
                 }),
               ],
             ),

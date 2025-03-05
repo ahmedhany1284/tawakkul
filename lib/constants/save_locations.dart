@@ -3,8 +3,7 @@ import 'package:path_provider/path_provider.dart';
 class SaveLocationsPaths {
   // function to handle audio url for saving location
 
-  static Future<String> getAudioSaveLocationUrl(
-      {required surahId, required readerIdentifier}) async {
+  static Future<String> getAudioSaveLocationUrl({required surahId, required readerIdentifier}) async {
     // check if permisson granted for external storage
 
     final appFolder = await getApplicationDocumentsDirectory();

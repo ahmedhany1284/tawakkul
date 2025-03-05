@@ -8,24 +8,17 @@ import 'package:tawakkal/constants/urls.dart';
 import 'package:tawakkal/data/models/quran_play_range_model.dart';
 import 'package:tawakkal/utils/extension.dart';
 import '../cache/quran_reader_cache.dart';
+
 // Create a playlist of MediaItems from a specified range of verses
-Future<List<MediaItem>> createPlaylistFromRange(
-    QuranPlayRangeModel playRangeModel) async {
+Future<List<MediaItem>> createPlaylistFromRange(QuranPlayRangeModel playRangeModel) async {
   final reader = QuranReaderCache.getSelectedReaderFromCache();
   List<MediaItem> mediaItemList = [];
 
   // Iterate through the specified range of surahs and verses
-  for (int surahId = playRangeModel.startSurah;
-  surahId <= playRangeModel.endsSurah;
-  surahId++) {
-    for (int verseId = (surahId == playRangeModel.startSurah
-        ? playRangeModel.startVerse
-        : 1);
-    verseId <=
-        (surahId == playRangeModel.endsSurah
-            ? playRangeModel.endsVerse
-            : getVerseCount(surahId));
-    verseId++) {
+  for (int surahId = playRangeModel.startSurah; surahId <= playRangeModel.endsSurah; surahId++) {
+    for (int verseId = (surahId == playRangeModel.startSurah ? playRangeModel.startVerse : 1);
+        verseId <= (surahId == playRangeModel.endsSurah ? playRangeModel.endsVerse : getVerseCount(surahId));
+        verseId++) {
       if (kIsWeb) {
         // Create MediaItem for web platform
         final audioUrl = await getAudioFileUrl(surahId, verseId);

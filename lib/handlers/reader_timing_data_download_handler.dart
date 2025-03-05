@@ -11,8 +11,7 @@ class ReaderTimingDataDownloadHandler {
   static Future<bool> checkIfDataExists({
     required QuranReader reader,
   }) async {
-    final saveLocation =
-        await SaveLocationsPaths.getReaderTimingDataLocationUrl();
+    final saveLocation = await SaveLocationsPaths.getReaderTimingDataLocationUrl();
     final fileName = '${reader.identifier}.json';
     // check if file exist first
     if (await File(saveLocation + fileName).exists()) {
@@ -34,8 +33,7 @@ class ReaderTimingDataDownloadHandler {
     Function(int count, int total)? onReceiveProgress,
   }) async {
     if (await Utils.checkForInternetConnection()) {
-      final saveLocation =
-          await SaveLocationsPaths.getReaderTimingDataLocationUrl();
+      final saveLocation = await SaveLocationsPaths.getReaderTimingDataLocationUrl();
       final fileName = '${reader.identifier}.json';
       return await DownloadService().downloadFile(
         url: reader.timingDataUrl,

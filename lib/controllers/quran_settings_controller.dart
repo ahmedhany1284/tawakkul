@@ -227,6 +227,7 @@ class QuranSettingsController extends GetxController {
     return true;
   }
 }
+
 class QuranOverlaySettings {
   int numberOfAyat;
   int intervalMinutes;

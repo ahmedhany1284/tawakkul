@@ -40,9 +40,7 @@ class QuranSearchController extends GetxController {
       return;
     }
     // Filter the Quran verses based on the search text
-    final filteredResults = quranVersesSimple
-        .where((quran) => quran.textUthmaniSimple.contains(searchText))
-        .toList();
+    final filteredResults = quranVersesSimple.where((quran) => quran.textUthmaniSimple.contains(searchText)).toList();
 
     searchResults.assignAll(filteredResults);
   }

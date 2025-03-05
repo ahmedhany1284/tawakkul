@@ -13,7 +13,6 @@ class AsmaullahPageView extends GetView {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
         title: const Text('أسماء الله الحسنى'), // App bar title
         titleTextStyle: Theme.of(context).primaryTextTheme.titleMedium,
       ),

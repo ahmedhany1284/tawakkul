@@ -11,8 +11,7 @@ Future<void> setupAudioPlayer() async {
   try {
     getIt<AudioPlayerHandlerImpl>();
   } catch (e) {
-    getIt.registerLazySingleton<AudioPlayerHandlerImpl>(
-        () => AudioPlayerHandlerImpl());
+    getIt.registerLazySingleton<AudioPlayerHandlerImpl>(() => AudioPlayerHandlerImpl());
     // services
     getIt.registerSingleton<AudioHandler>(await initAudioService());
     Get.lazyPut(() => SegmentsRepository());

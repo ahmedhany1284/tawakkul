@@ -34,7 +34,7 @@ class AzkarDetailsPage extends GetView<AzkarDetailsController> {
       ),
       body: PopScope(
         canPop: false,
-        onPopInvoked: (didPop){
+        onPopInvoked: (didPop) {
           if (didPop) {
             return;
           }
@@ -73,8 +73,7 @@ class AzkarDetailsPage extends GetView<AzkarDetailsController> {
                                   title: zkr.title,
                                   note: zkr.note,
                                   isDone: zkr.isDone,
-                                  description:
-                                      ArabicNumbers().convert(zkr.text),
+                                  description: ArabicNumbers().convert(zkr.text),
                                   count: zkr.count,
                                   counter: zkr.counter,
                                   onResetButtonPressed: () {
@@ -87,8 +86,7 @@ class AzkarDetailsPage extends GetView<AzkarDetailsController> {
                               },
                             ),
                             const SizedBox(height: 10),
-                            if (index == controller.azkarData.length - 1)
-                              const SizedBox(height: 30),
+                            if (index == controller.azkarData.length - 1) const SizedBox(height: 30),
                           ],
                         ),
                       );

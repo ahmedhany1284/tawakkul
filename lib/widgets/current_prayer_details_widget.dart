@@ -25,9 +25,7 @@ class CurrentPrayerDetailsWidget extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _buildPrayerTimeNextAndCurrent(
-                        title: 'الصلاة الآن',
-                        prayer: repository.getCurrentPrayer(),
-                        theme: Theme.of(context)),
+                        title: 'الصلاة الآن', prayer: repository.getCurrentPrayer(), theme: Theme.of(context)),
                   ),
                   const Gap(15),
                   Expanded(

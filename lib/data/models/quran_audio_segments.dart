@@ -12,9 +12,7 @@ class QuranAudioSegments {
   factory QuranAudioSegments.fromJson(Map<String, dynamic> json) {
     return QuranAudioSegments(
       ayah: json['ayah'],
-      segments: ((json['segments'] ?? []) as List)
-          .map((segment) => List<int>.from(segment))
-          .toList(),
+      segments: ((json['segments'] ?? []) as List).map((segment) => List<int>.from(segment)).toList(),
       surah: json['surah'],
     );
   }

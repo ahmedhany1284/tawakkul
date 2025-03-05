@@ -9,8 +9,7 @@ import 'package:tawakkal/constants/json_path.dart';
 Future<bool> showAskUserForAlarmPermission() async {
   return await Get.dialog(AlertDialog(
     title: const Text('إذن التنبيهات'),
-    content: const Text(
-        'ليقوم التطبيق بتذكيرك باوقات الصلاة والاذكار يجب إعطاء إذن التنبيهات'),
+    content: const Text('ليقوم التطبيق بتذكيرك باوقات الصلاة والاذكار يجب إعطاء إذن التنبيهات'),
     actions: <Widget>[
       TextButton(
         onPressed: () {
@@ -31,8 +30,7 @@ Future<bool> showAskUserForAlarmPermission() async {
 Future<bool> showAskUserForNotificationsPermission() async {
   return await Get.dialog(AlertDialog(
     title: const Text('إذن اظهار الإشعارات'),
-    content: const Text(
-        'ليقوم التطبيق بتذكيرك باوقات الصلاة والاذكار يجب إعطاء إذن اظهار الإشعارات'),
+    content: const Text('ليقوم التطبيق بتذكيرك باوقات الصلاة والاذكار يجب إعطاء إذن اظهار الإشعارات'),
     actions: [
       TextButton(
         onPressed: () {
@@ -203,8 +201,7 @@ Future<bool> showAskUserForDownloadTimingData() async {
   return await Get.dialog(
     AlertDialog(
       title: const Text('تنبيه'),
-      content: const Text(
-          'يجب تنزيل ملفات التوقيت أولاً لتميز كلمة بكلمة. هل تريد التحميل الآن؟'),
+      content: const Text('يجب تنزيل ملفات التوقيت أولاً لتميز كلمة بكلمة. هل تريد التحميل الآن؟'),
       actions: [
         TextButton(
           onPressed: () => Get.back(result: true),
@@ -226,8 +223,7 @@ Future<void> showDownloadFailedDialog() async {
     builder: (context) {
       return AlertDialog(
         title: const Text('فشل التنزيل'),
-        content:
-            const Text('فشل في تنزيل الملف. يرجى المحاولة مرة أخرى لاحقًا.'),
+        content: const Text('فشل في تنزيل الملف. يرجى المحاولة مرة أخرى لاحقًا.'),
         actions: [
           TextButton(
             onPressed: () => Get.back(),

@@ -21,8 +21,7 @@ class MoreActivitiesPage extends GetView<MoreActivitiesController> {
           actions: [
             IconButton(
                 onPressed: () {
-              
-                   Get.to(() => const AppSettingsPage());
+                  Get.to(() => const AppSettingsPage());
                 },
                 icon: const Icon(FluentIcons.settings_16_regular))
           ],

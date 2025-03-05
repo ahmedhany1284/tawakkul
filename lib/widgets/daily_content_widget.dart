@@ -44,14 +44,8 @@ class DailyContentContainer extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 itemBuilder: (context) {
                   return [
-                    CustomPopupMenuItem.build(
-                        index: 'copy',
-                        iconData: FluentIcons.copy_16_regular,
-                        text: 'نسخ'),
-                    CustomPopupMenuItem.build(
-                        index: 'share',
-                        iconData: FluentIcons.share_16_regular,
-                        text: 'مشاركة')
+                    CustomPopupMenuItem.build(index: 'copy', iconData: FluentIcons.copy_16_regular, text: 'نسخ'),
+                    CustomPopupMenuItem.build(index: 'share', iconData: FluentIcons.share_16_regular, text: 'مشاركة')
                   ];
                 },
                 onSelected: (value) {
@@ -79,8 +73,7 @@ class DailyContentContainer extends StatelessWidget {
                 children: [
                   Text(
                     description,
-                    style: descriptionTextStyle ??
-                        theme.textTheme.titleMedium!.copyWith(height: 2),
+                    style: descriptionTextStyle ?? theme.textTheme.titleMedium!.copyWith(height: 2),
                     textAlign: TextAlign.center,
                   ),
                   const Gap(10),
@@ -88,8 +81,7 @@ class DailyContentContainer extends StatelessWidget {
                       ? const SizedBox()
                       : Text(
                           subtitle!,
-                          style: subtitleTextStyle ??
-                              const TextStyle(fontWeight: FontWeight.bold),
+                          style: subtitleTextStyle ?? const TextStyle(fontWeight: FontWeight.bold),
                           textAlign: TextAlign.center,
                         )
                 ],

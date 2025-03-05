@@ -19,17 +19,13 @@ class TafsirDetailsController extends GetxController {
     tafsirsUrls.clear();
     tafsirsData.clear();
     final appDocumentsDirectory = await getApplicationDocumentsDirectory();
-    final downloadPath =
-        '${appDocumentsDirectory.path}/downloaded_content/tafsirs';
+    final downloadPath = '${appDocumentsDirectory.path}/downloaded_content/tafsirs';
 
     try {
-      tafsirsUrls.value = Directory("$downloadPath/")
-          .listSync()
-          .where((element) => element.path.endsWith(".json"))
-          .toList();
+      tafsirsUrls.value =
+          Directory("$downloadPath/").listSync().where((element) => element.path.endsWith(".json")).toList();
 
-      await Future.wait(
-          tafsirsUrls.map((element) => loadTafsirDataFromFile(element)));
+      await Future.wait(tafsirsUrls.map((element) => loadTafsirDataFromFile(element)));
     } catch (e) {
       log(e.toString());
     }
@@ -48,8 +44,7 @@ class TafsirDetailsController extends GetxController {
 
   void goToNextAyah() {
     if (tafsirsData.isNotEmpty) {
-      if (verseNumber.value <
-          tafsirsData.first.tafsirLists[surahNumber.value - 1].length) {
+      if (verseNumber.value < tafsirsData.first.tafsirLists[surahNumber.value - 1].length) {
         // If there's a next Ayah in the current Surah, go to it.
         verseNumber.value++;
       } else if (surahNumber.value < tafsirsData.first.tafsirLists.length) {
@@ -80,8 +75,7 @@ class TafsirDetailsController extends GetxController {
       } else if (surahNumber.value > 1) {
         // If there's a previous Surah, go to its last Ayah.
         surahNumber.value--;
-        verseNumber.value =
-            tafsirsData.first.tafsirLists[surahNumber.value - 1].length;
+        verseNumber.value = tafsirsData.first.tafsirLists[surahNumber.value - 1].length;
       }
     }
   }

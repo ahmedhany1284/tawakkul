@@ -36,15 +36,11 @@ class QuranVerseModel {
         pageNumber: json['page_number'] ?? 0,
         juzNumber: json['juz_number'] ?? 0,
         textUthmaniSimple: json['text_uthmani_simple'] ?? '',
-        words: List<Word>.from(
-            (json['words'] ?? []).map((word) => Word.fromJson(word))),
+        words: List<Word>.from((json['words'] ?? []).map((word) => Word.fromJson(word))),
         surahNumber: int.parse((json['verse_key'] ?? '0:0').split(':')[0]));
   }
   Map<String, dynamic> toJson(QuranVerseModel model) {
-    return {
-      'verse_number': model.verseNumber,
-      'surah_number': model.surahNumber
-    };
+    return {'verse_number': model.verseNumber, 'surah_number': model.surahNumber};
   }
 }
 

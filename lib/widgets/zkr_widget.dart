@@ -71,8 +71,7 @@ class ZkrWidget extends StatelessWidget {
         children: [
           // Top row with action buttons
           Material(
-            borderRadius: const BorderRadius.only(
-                topRight: Radius.circular(9), topLeft: Radius.circular(9)),
+            borderRadius: const BorderRadius.only(topRight: Radius.circular(9), topLeft: Radius.circular(9)),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -88,8 +87,7 @@ class ZkrWidget extends StatelessWidget {
                         );
                       },
                     ),
-                    const SizedBox(
-                        height: 45, child: VerticalDivider(width: 1)),
+                    const SizedBox(height: 45, child: VerticalDivider(width: 1)),
                     buildTextIconButton(
                       FluentIcons.share_16_regular,
                       'مشاركة',
@@ -97,22 +95,19 @@ class ZkrWidget extends StatelessWidget {
                         await Share.share(sharetext);
                       },
                     ),
-                    const SizedBox(
-                        height: 45, child: VerticalDivider(width: 1)),
+                    const SizedBox(height: 45, child: VerticalDivider(width: 1)),
                     buildTextIconButton(
                       Icons.refresh_rounded,
                       'إعادة',
                       onResetButtonPressed,
                     ),
-                    const SizedBox(
-                        height: 45, child: VerticalDivider(width: 1)),
+                    const SizedBox(height: 45, child: VerticalDivider(width: 1)),
                   ],
                 ),
                 // Display the count
                 Row(
                   children: [
-                    const SizedBox(
-                        height: 45, child: VerticalDivider(width: 1)),
+                    const SizedBox(height: 45, child: VerticalDivider(width: 1)),
                     Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Text(
@@ -137,9 +132,8 @@ class ZkrWidget extends StatelessWidget {
                 if (title != null)
                   Text(
                     title!,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: fontSize != null ? fontSize! - 2 : fontSize),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize != null ? fontSize! - 2 : fontSize),
                   ),
                 SizedBox(height: title != null ? 10 : 0),
                 Text(
@@ -151,9 +145,8 @@ class ZkrWidget extends StatelessWidget {
                   Text(
                     '($note)',
                     textAlign: TextAlign.justify,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: fontSize != null ? fontSize! - 2 : fontSize),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: fontSize != null ? fontSize! - 2 : fontSize),
                   ),
                 const SizedBox(height: 10),
               ],
@@ -166,9 +159,7 @@ class ZkrWidget extends StatelessWidget {
 
           // Bottom row with the counter button
           Material(
-            borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(9),
-                bottomRight: Radius.circular(9)),
+            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(9), bottomRight: Radius.circular(9)),
             child: Row(
               children: [
                 Expanded(
@@ -178,17 +169,14 @@ class ZkrWidget extends StatelessWidget {
                             ? theme.primaryColorDark
                             : theme.primaryColor.withAlpha(200)
                         : Colors.transparent,
-                    borderRadius: const BorderRadius.only(
-                        bottomRight: Radius.circular(9),
-                        bottomLeft: Radius.circular(9)),
+                    borderRadius:
+                        const BorderRadius.only(bottomRight: Radius.circular(9), bottomLeft: Radius.circular(9)),
                     child: InkWell(
-                      borderRadius: const BorderRadius.only(
-                          bottomRight: Radius.circular(9),
-                          bottomLeft: Radius.circular(9)),
+                      borderRadius:
+                          const BorderRadius.only(bottomRight: Radius.circular(9), bottomLeft: Radius.circular(9)),
                       onTap: isDone ? null : onCounterButtonPressed,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 13, horizontal: 80),
+                        padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 80),
                         child: isDone
                             ? const Icon(
                                 Icons.check,
@@ -200,9 +188,7 @@ class ZkrWidget extends StatelessWidget {
                                 presetFontSizes: const [14, 20, 25],
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                  color: isDone
-                                      ? Colors.white
-                                      : theme.colorScheme.onBackground,
+                                  color: isDone ? Colors.white : theme.colorScheme.onBackground,
                                 ),
                                 maxLines: 1,
                               ),

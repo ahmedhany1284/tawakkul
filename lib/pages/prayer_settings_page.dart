@@ -29,8 +29,7 @@ class PrayerSettingsPage extends GetView {
           ListTile(
             title: Text(
               'طرق الحساب',
-              style: theme.textTheme.titleSmall!
-                  .copyWith(color: theme.primaryColor),
+              style: theme.textTheme.titleSmall!.copyWith(color: theme.primaryColor),
             ),
             dense: true,
           ),
@@ -43,10 +42,7 @@ class PrayerSettingsPage extends GetView {
               'طريقة الحساب',
               style: titleTextStyle,
             ),
-            subtitle: Text(
-                calculationMethodList[
-                        PrayerTimeCache.getCalculationMethodFromCache().index]
-                    ['title'],
+            subtitle: Text(calculationMethodList[PrayerTimeCache.getCalculationMethodFromCache().index]['title'],
                 style: subtitleTextStyle),
           ),
           ListTile(
@@ -58,16 +54,13 @@ class PrayerSettingsPage extends GetView {
               'طريقة حساب العصر',
               style: titleTextStyle,
             ),
-            subtitle: Text(
-                madhabList[PrayerTimeCache.getMadhabFromCache().index]['title'],
-                style: subtitleTextStyle),
+            subtitle: Text(madhabList[PrayerTimeCache.getMadhabFromCache().index]['title'], style: subtitleTextStyle),
           ),
           const Divider(),
           ListTile(
             title: Text(
               'تنبيه الصلوات',
-              style: theme.textTheme.titleSmall!
-                  .copyWith(color: theme.primaryColor),
+              style: theme.textTheme.titleSmall!.copyWith(color: theme.primaryColor),
             ),
             dense: true,
           ),
@@ -80,8 +73,7 @@ class PrayerSettingsPage extends GetView {
                 return const SizedBox();
               }
               var prayer = Prayer.values[index];
-              var isNotificationEnabled =
-                  PrayerTimeCache.getPrayerNotificationMode(prayer: prayer);
+              var isNotificationEnabled = PrayerTimeCache.getPrayerNotificationMode(prayer: prayer);
 
               return Obx(() {
                 return SwitchListTile(
@@ -97,14 +89,12 @@ class PrayerSettingsPage extends GetView {
                   }),
                   value: isNotificationEnabled.value,
                   title: Text(
-                    controller.repository
-                        .getPrayerNameArabic(prayer: Prayer.values[index]),
+                    controller.repository.getPrayerNameArabic(prayer: Prayer.values[index]),
                     style: titleTextStyle,
                   ),
                   onChanged: (value) {
                     isNotificationEnabled.value = value;
-                    PrayerTimeCache.savePrayerNotificationMode(
-                        prayer: prayer, notificationMode: value);
+                    PrayerTimeCache.savePrayerNotificationMode(prayer: prayer, notificationMode: value);
                     controller.update();
                   },
                 );

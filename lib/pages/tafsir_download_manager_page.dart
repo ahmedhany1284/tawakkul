@@ -5,8 +5,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:tawakkal/controllers/tafsir_download_manager_controller.dart';
 import 'package:tawakkal/widgets/custom_progress_indicator.dart';
 
-class TafsirDownloadManagerPage
-    extends GetView<TafsirDownloadManagerController> {
+class TafsirDownloadManagerPage extends GetView<TafsirDownloadManagerController> {
   const TafsirDownloadManagerPage({super.key});
   @override
   Widget build(BuildContext context) {
@@ -20,7 +19,7 @@ class TafsirDownloadManagerPage
           title: const Text(
             'تفسير',
           ),
-            titleTextStyle: Theme.of(context).primaryTextTheme.titleMedium,
+          titleTextStyle: Theme.of(context).primaryTextTheme.titleMedium,
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,12 +65,9 @@ class TafsirDownloadManagerPage
                               trailing: !tafsir.isDownloaded.value
                                   ? !tafsir.isDownloading.value
                                       ? IconButton(
-                                          style: IconButton.styleFrom(
-                                              visualDensity:
-                                                  VisualDensity.compact),
+                                          style: IconButton.styleFrom(visualDensity: VisualDensity.compact),
                                           onPressed: () async {
-                                            controller.onDownloadButtonPressed(
-                                                tafsir);
+                                            controller.onDownloadButtonPressed(tafsir);
                                           },
                                           icon: Icon(
                                             Iconsax.arrow_down_2,
@@ -86,8 +82,7 @@ class TafsirDownloadManagerPage
                                           ),
                                         )
                                   : IconButton(
-                                      style: IconButton.styleFrom(
-                                          visualDensity: VisualDensity.compact),
+                                      style: IconButton.styleFrom(visualDensity: VisualDensity.compact),
                                       onPressed: () async {
                                         controller.deleteTafsir(tafsir);
                                       },

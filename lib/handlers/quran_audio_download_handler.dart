@@ -9,8 +9,7 @@ import 'package:tawakkal/utils/utils.dart';
 
 class QuranAudioDownloadHandler {
   // Delete the downloaded folder for a specific surah
-  static Future<void> deleteDownloadedSurah(
-      {required int surahId, required String readerIdentifier}) async {
+  static Future<void> deleteDownloadedSurah({required int surahId, required String readerIdentifier}) async {
     Utils.deleteDirectory(
       filePath: await SaveLocationsPaths.getAudioSaveLocationUrl(
         surahId: surahId,
@@ -27,8 +26,7 @@ class QuranAudioDownloadHandler {
   }) async {
     for (var surahId = 0; surahId < 114; surahId++) {
       onSurahStartDownloading(surahId);
-      await downloadSingleSurah(
-          surahId: surahId, reader: reader, surahProgress: surahProgress);
+      await downloadSingleSurah(surahId: surahId, reader: reader, surahProgress: surahProgress);
     }
   }
 
@@ -37,8 +35,7 @@ class QuranAudioDownloadHandler {
       {required int surahId,
       required QuranReader reader,
       required Function(int surah, int progress) surahProgress}) async {
-    if (await ReaderTimingDataDownloadHandler.checkIfDataExists(
-        reader: reader)) {
+    if (await ReaderTimingDataDownloadHandler.checkIfDataExists(reader: reader)) {
       if (await Utils.checkForInternetConnection()) {
         // Increment surahId to match the Quran numbering
         surahId++;
@@ -47,15 +44,13 @@ class QuranAudioDownloadHandler {
 
         for (var verse = 1; verse <= totalVerseToDownload; verse++) {
           // Get the save location for the audio file
-          final audioSaveFolder =
-              await SaveLocationsPaths.getAudioSaveLocationUrl(
+          final audioSaveFolder = await SaveLocationsPaths.getAudioSaveLocationUrl(
             readerIdentifier: reader.identifier,
             surahId: surahId,
           );
 
           // Generate the file name based on surah and verse numbers
-          var fileName =
-              '${surahId.toString().padLeft(3, '0')}${verse.toString().padLeft(3, '0')}.mp3';
+          var fileName = '${surahId.toString().padLeft(3, '0')}${verse.toString().padLeft(3, '0')}.mp3';
 
           // Construct the download URL for the current verse
           final downloadUrl = '${Urls.audioUrl}${reader.identifier}/$fileName';
@@ -70,8 +65,7 @@ class QuranAudioDownloadHandler {
           downloadedVerses++;
 
           // Report progress for the current surah
-          surahProgress(surahId,
-              ((downloadedVerses / totalVerseToDownload) * 100).toInt());
+          surahProgress(surahId, ((downloadedVerses / totalVerseToDownload) * 100).toInt());
         }
 
         return true;

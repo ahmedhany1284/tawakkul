@@ -20,22 +20,18 @@ class ElectronicTashbihCounterPage extends GetView<ElectronicTasbihController> {
         titleTextStyle: theme.primaryTextTheme.titleMedium,
         actions: [
           IconButton(
-            onPressed: () =>
-                controller.onResetCounterPressed(eTasbihModel: eTasbihModel),
+            onPressed: () => controller.onResetCounterPressed(eTasbihModel: eTasbihModel),
             icon: const Icon(Icons.refresh_rounded),
           ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () =>
-            controller.counterDecrement(eTasbihModel: eTasbihModel),
+        onPressed: () => controller.counterDecrement(eTasbihModel: eTasbihModel),
         child: Text('${ArabicNumbers().convert(1)}-'),
       ),
       body: OrientationBuilder(
         builder: (context, orientation) {
-          return orientation == Orientation.portrait
-              ? buildPortraitLayout(theme)
-              : buildLandscapeLayout(theme);
+          return orientation == Orientation.portrait ? buildPortraitLayout(theme) : buildLandscapeLayout(theme);
         },
       ),
     );
@@ -74,15 +70,13 @@ class ElectronicTashbihCounterPage extends GetView<ElectronicTasbihController> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             Obx(() {
-              return buildCounterColumn('عدد الدورات',
-                  eTasbihModel.totalCounter.value ~/ eTasbihModel.count, theme);
+              return buildCounterColumn('عدد الدورات', eTasbihModel.totalCounter.value ~/ eTasbihModel.count, theme);
             }),
             const SizedBox(height: 35, child: VerticalDivider()),
             buildCounterColumn('عدد الحبات', eTasbihModel.count, theme),
             const SizedBox(height: 35, child: VerticalDivider()),
             Obx(() {
-              return buildCounterColumn(
-                  'العدد الإجمالي', eTasbihModel.totalCounter.value, theme);
+              return buildCounterColumn('العدد الإجمالي', eTasbihModel.totalCounter.value, theme);
             }),
           ],
         ),

@@ -2,8 +2,7 @@ import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 
 class SettingsSection extends StatelessWidget {
-  const SettingsSection(
-      {super.key, required this.sectionTitle, required this.child});
+  const SettingsSection({super.key, required this.sectionTitle, required this.child});
   final String sectionTitle;
   final Widget child;
   @override
@@ -43,10 +42,7 @@ class SettingsSection extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .labelLarge!
-                              .copyWith(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onBackground),
+                              .copyWith(color: Theme.of(context).colorScheme.onBackground),
                         ),
                         const Icon(Icons.keyboard_arrow_down),
                       ],

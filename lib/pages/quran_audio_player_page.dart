@@ -11,8 +11,7 @@ import '../../../../../services/audio/audio_manager.dart';
 import '../../../../../widgets/custom_progress_indicator.dart';
 import '../routes/app_pages.dart';
 
-class QuranAudioPlayerBottomBar
-    extends GetView<QuranAudioPlayerBottomBarController> {
+class QuranAudioPlayerBottomBar extends GetView<QuranAudioPlayerBottomBarController> {
   const QuranAudioPlayerBottomBar({super.key});
 
   @override
@@ -67,8 +66,7 @@ class QuranAudioPlayerBottomBar
                           onPressed: () {
                             Get.toNamed(
                               Routes.AUDIO_SETTINGS,
-                              arguments: controller
-                                  .quranPageViewController.currentPageData,
+                              arguments: controller.quranPageViewController.currentPageData,
                             );
                           },
                         )
@@ -77,8 +75,7 @@ class QuranAudioPlayerBottomBar
                   )
                 : const SizedBox(),
           ),
-          Obx(() => controller.isControlsVisible.value &&
-                  controller.audioHandler != null
+          Obx(() => controller.isControlsVisible.value && controller.audioHandler != null
               ? Expanded(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -90,17 +87,13 @@ class QuranAudioPlayerBottomBar
                             stream: controller.audioHandler!.playbackState,
                             builder: (context, snapshot) {
                               final playbackState = snapshot.data;
-                              final processingState =
-                                  playbackState?.processingState;
+                              final processingState = playbackState?.processingState;
                               final playing = playbackState?.playing;
-                              if (processingState ==
-                                      AudioProcessingState.loading ||
-                                  processingState ==
-                                      AudioProcessingState.buffering) {
+                              if (processingState == AudioProcessingState.loading ||
+                                  processingState == AudioProcessingState.buffering) {
                                 return Container(
                                   margin: const EdgeInsets.all(8.0),
-                                  child: Center(
-                                      child: CustomCircularProgressIndicator()),
+                                  child: Center(child: CustomCircularProgressIndicator()),
                                 );
                               } else if (playing != true) {
                                 return IconButton.filled(
@@ -131,8 +124,7 @@ class QuranAudioPlayerBottomBar
                                 onPressed: () {
                                   controller.audioHandler!.stop();
                                   controller.isControlsVisible.value = false;
-                                  AudioSettingsCache.setPlayRangeValidState(
-                                      isValid: false);
+                                  AudioSettingsCache.setPlayRangeValidState(isValid: false);
                                 },
                                 icon: const Icon(
                                   FluentIcons.stop_16_regular,
@@ -155,15 +147,12 @@ class QuranAudioPlayerBottomBar
                               StreamBuilder<QueueState>(
                                 stream: controller.audioHandler!.queueState,
                                 builder: (context, snapshot) {
-                                  final queueState =
-                                      snapshot.data ?? QueueState.empty;
+                                  final queueState = snapshot.data ?? QueueState.empty;
                                   return IconButton(
                                     style: IconButton.styleFrom(
                                       visualDensity: VisualDensity.compact,
                                     ),
-                                    onPressed: queueState.hasNext
-                                        ? controller.audioHandler!.skipToNext
-                                        : null,
+                                    onPressed: queueState.hasNext ? controller.audioHandler!.skipToNext : null,
                                     icon: const Icon(
                                       FluentIcons.fast_forward_20_regular,
                                     ),
@@ -173,8 +162,7 @@ class QuranAudioPlayerBottomBar
                               StreamBuilder<QueueState>(
                                 stream: controller.audioHandler!.queueState,
                                 builder: (context, snapshot) {
-                                  final queueState =
-                                      snapshot.data ?? QueueState.empty;
+                                  final queueState = snapshot.data ?? QueueState.empty;
                                   return IconButton(
                                     style: IconButton.styleFrom(
                                       visualDensity: VisualDensity.compact,
@@ -185,10 +173,7 @@ class QuranAudioPlayerBottomBar
                                         FluentIcons.fast_forward_20_regular,
                                       ),
                                     ),
-                                    onPressed: queueState.hasPrevious
-                                        ? controller
-                                            .audioHandler!.skipToPrevious
-                                        : null,
+                                    onPressed: queueState.hasPrevious ? controller.audioHandler!.skipToPrevious : null,
                                   );
                                 },
                               ),
@@ -203,8 +188,7 @@ class QuranAudioPlayerBottomBar
                         onPressed: () {
                           Get.toNamed(
                             Routes.AUDIO_SETTINGS,
-                            arguments: controller
-                                .quranPageViewController.currentPageData,
+                            arguments: controller.quranPageViewController.currentPageData,
                           );
                         },
                       )

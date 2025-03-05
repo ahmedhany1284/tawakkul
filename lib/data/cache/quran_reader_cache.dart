@@ -7,16 +7,14 @@ import '../models/quran_reader.dart';
 
 class QuranReaderCache {
   // Access SharedPreferences from SharedPreferencesService
-  static final SharedPreferences prefs =
-      SharedPreferencesService.instance.prefs;
+  static final SharedPreferences prefs = SharedPreferencesService.instance.prefs;
 
   // Default Quran reader with Abdul Basit (Mujawwad) as the initial if no Reader Selected
   static final defaultReader = QuranReader(
     identifier: "Abdul_Basit_Mujawwad_128kbps",
     englishName: "Abdul Basit (Mujawwad)",
     name: "عبدالباسط عبدالصمد (مجود)",
-    timingDataUrl:
-        "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Abdul_Basit_Mujawwad_128kbps.json",
+    timingDataUrl: "https://gitea.com/mostafamasri/quran_timing_data/raw/branch/main/Abdul_Basit_Mujawwad_128kbps.json",
   );
 
   // Key for storing the selected Quran reader in local cache

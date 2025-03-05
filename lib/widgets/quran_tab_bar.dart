@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class QuranTabBar extends StatelessWidget {
-  const QuranTabBar(
-      {super.key, required this.onTap, required this.tabController});
+  const QuranTabBar({super.key, required this.onTap, required this.tabController});
   final TabController tabController;
   final Function(int)? onTap;
   @override

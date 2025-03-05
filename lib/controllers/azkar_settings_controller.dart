@@ -20,16 +20,14 @@ class AzkarSettingsController extends GetxController {
   void initAzkarSettings() {
     azkarSettings = AzkarSettingsModel();
     azkarSettings.fontSize = AzkarSettingsCache.getFontSize();
-    azkarSettings.showExitConfirmDialog =
-        AzkarSettingsCache.getShowExitConfirmDialog();
+    azkarSettings.showExitConfirmDialog = AzkarSettingsCache.getShowExitConfirmDialog();
     azkarSettings.showNotification = AzkarSettingsCache.getShowNotification();
     azkarSettings.morningTime = AzkarSettingsCache.getMorningTime();
     azkarSettings.nightTime = AzkarSettingsCache.getNightTime();
     azkarSettings.sleepTime = AzkarSettingsCache.getSleepTime();
   }
 
-  Future<void> selectTime(BuildContext context, TimeOfDay initialTime,
-      Function(TimeOfDay) onTimeSelected) async {
+  Future<void> selectTime(BuildContext context, TimeOfDay initialTime, Function(TimeOfDay) onTimeSelected) async {
     final pickedTime = await showTimePicker(
       context: context,
       initialTime: initialTime,

@@ -7,8 +7,7 @@ import 'package:flutter/material.dart';
 class ArabicTimerWidget extends StatefulWidget {
   final DateTime targetDate;
   final Function()? onTimerFinished;
-  const ArabicTimerWidget(
-      {super.key, required this.targetDate, this.onTimerFinished});
+  const ArabicTimerWidget({super.key, required this.targetDate, this.onTimerFinished});
 
   @override
   // ignore: library_private_types_in_public_api

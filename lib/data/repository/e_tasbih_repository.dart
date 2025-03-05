@@ -30,8 +30,7 @@ class ElectronicTasbihRepository {
   }
 
 // Update Counter ElectronicTasbih
-  Future<void> updateCounters(
-      {required ElectronicTasbihModel eTasbihModel}) async {
+  Future<void> updateCounters({required ElectronicTasbihModel eTasbihModel}) async {
     await _databaseService.updateData(
       table: _tableName,
       values: {
@@ -58,6 +57,7 @@ class ElectronicTasbihRepository {
       ],
     );
   }
+
   // Insert ElectronicTasbih
   Future<void> insertTasbih({
     required ElectronicTasbihModel electronicTasbihModel,
@@ -71,8 +71,7 @@ class ElectronicTasbihRepository {
   // Get all ElectronicTasbih
   Future<List<ElectronicTasbihModel>> getAllTasbih() async {
     // Read data from the database
-    List<Map<String, dynamic>> maps =
-        await _databaseService.readData(tableName: _tableName);
+    List<Map<String, dynamic>> maps = await _databaseService.readData(tableName: _tableName);
 
     // Map data to list of ElectronicTasbihModel
     return maps.map((e) => ElectronicTasbihModel.fromJson(e)).toList();

@@ -58,16 +58,14 @@ class QuranAudioSettingsController extends GetxController {
   // save all settings and exit
   void onSaveAllPressed() async {
     // Get the selected speed and repeat values
-    double speed = speedChoice.keys
-        .firstWhere((element) => speedChoice[element] == selectedSpeed);
-    int repeat = repeatChoice.keys
-        .firstWhere((element) => repeatChoice[element] == selectedRepeat);
+    double speed = speedChoice.keys.firstWhere((element) => speedChoice[element] == selectedSpeed);
+    int repeat = repeatChoice.keys.firstWhere((element) => repeatChoice[element] == selectedRepeat);
 
     // Save the Quran play range, speed, and repeat to cache
     AudioSettingsCache.saveSpeed(speed: speed);
     AudioSettingsCache.saveRepeat(repeatTimes: repeat);
     AudioSettingsCache.saveQuranPlayRange(playRange: playRange);
-   
+
     // Close the settings page
     Get.back();
   }
@@ -165,8 +163,7 @@ class QuranAudioSettingsController extends GetxController {
   }
 
 // Set the play range based on the provided parameters
-  void setQuranPlayRange(
-      {required QuranPlayRangeModel playRange, isBegin}) async {
+  void setQuranPlayRange({required QuranPlayRangeModel playRange, isBegin}) async {
     this.playRange = playRange;
     adjustPlayRangeToNearestValid(isBegin: isBegin);
     update();
@@ -179,8 +176,7 @@ class QuranAudioSettingsController extends GetxController {
     final endSurah = playRange.endsSurah;
     final endVerse = playRange.endsVerse;
 
-    if (startSurah > endSurah ||
-        (startSurah == endSurah && startVerse > endVerse)) {
+    if (startSurah > endSurah || (startSurah == endSurah && startVerse > endVerse)) {
       // Swap values if the "from" range is greater than the "to" range.
       if (isBegin) {
         playRange = playRange.copyWith(

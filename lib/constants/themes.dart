@@ -21,8 +21,7 @@ final lightTheme = FlexThemeData.light(
     navigationBarUnselectedIconSchemeColor: SchemeColor.onPrimaryContainer,
     navigationBarIndicatorSchemeColor: SchemeColor.primary,
   ),
-  visualDensity:
-      FlexColorScheme.defaultComfortablePlatformDensity(TargetPlatform.android),
+  visualDensity: FlexColorScheme.defaultComfortablePlatformDensity(TargetPlatform.android),
   useMaterial3: true,
   swapLegacyOnMaterial3: true,
   fontFamily: GoogleFonts.ibmPlexSansArabic().fontFamily,

@@ -15,8 +15,7 @@ class SurahListView extends GetView {
   @override
   Widget build(BuildContext context) {
     final surahNumbers = List.generate(114, (index) => index + 1)
-        .where((surahNumber) =>
-        surahNumber.getSurahNameArabicSimple.contains(searchText))
+        .where((surahNumber) => surahNumber.getSurahNameArabicSimple.contains(searchText))
         .toList();
     return ListView.separated(
       padding: EdgeInsets.zero,

@@ -57,12 +57,10 @@ class QuranAudioPlayerBottomBarController extends GetxController {
 
   // Method to check if timing data is available
   Future<bool> checkIfTimingDataAvailable() async {
-    return await ReaderTimingDataDownloadHandler.checkIfDataExists(
-        reader: selectedReader.value);
+    return await ReaderTimingDataDownloadHandler.checkIfDataExists(reader: selectedReader.value);
   }
 
-  void startPlaying(
-      {QuranPlayRangeModel? playRangeModel, required bool isWordByWord}) async {
+  void startPlaying({QuranPlayRangeModel? playRangeModel, required bool isWordByWord}) async {
     // Retrieve the saved play range or use default values
     playRangeModel ??= AudioSettingsCache.getQuranPlayRange();
 
@@ -79,8 +77,7 @@ class QuranAudioPlayerBottomBarController extends GetxController {
     isControlsVisible.value = true;
 
     // Add queue items and play
-    await audioHandler!
-        .addQueueItems(await createPlaylistFromRange(playRangeModel));
+    await audioHandler!.addQueueItems(await createPlaylistFromRange(playRangeModel));
     await audioHandler!.setSpeed(playerSpeed);
     await audioHandler!.play();
   }

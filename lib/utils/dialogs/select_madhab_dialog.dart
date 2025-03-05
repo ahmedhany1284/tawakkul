@@ -52,8 +52,7 @@ class MadhabSelectionDialogState extends State<MadhabSelectionDialog> {
               PrayerTimeCache.saveMadhabToCache(selectedMadhab!);
               await repository.initPrayerTimes();
               // cancel all alarms and re schedule new alarm for next prayer
-              Get.find<NotificationAlarmHandler>()
-                  .cancelAllAndNextPrayerSchedule();
+              Get.find<NotificationAlarmHandler>().cancelAllAndNextPrayerSchedule();
               Get.forceAppUpdate();
               Get.back();
             }

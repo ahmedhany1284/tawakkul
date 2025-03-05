@@ -41,9 +41,7 @@ extension IntExtension on int {
     }
 
     if (arabic) {
-      return surah[this - 1]['place'].toString() == 'Madinah'
-          ? 'مدنية'
-          : 'مكية';
+      return surah[this - 1]['place'].toString() == 'Madinah' ? 'مدنية' : 'مكية';
     }
 
     return surah[this - 1]['place'].toString();

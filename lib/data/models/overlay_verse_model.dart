@@ -1,4 +1,3 @@
-
 class QuranVerse {
   final String arabicText;
   final String surahName;
@@ -12,6 +11,7 @@ class QuranVerse {
     required this.surahNumber,
   });
 }
+
 class SurahModel {
   final String index;
   final String name;
@@ -33,9 +33,7 @@ class SurahModel {
       name: json['name'] ?? '',
       verses: Map<String, String>.from(json['verse'] ?? {}),
       count: json['count'] ?? 0,
-      juz: (json['juz'] as List?)
-          ?.map((e) => JuzModel.fromJson(e))
-          .toList() ?? [],
+      juz: (json['juz'] as List?)?.map((e) => JuzModel.fromJson(e)).toList() ?? [],
     );
   }
 }

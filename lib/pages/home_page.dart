@@ -25,7 +25,6 @@ class HomePage extends GetView<HomeController> {
             onDestinationSelected: (value) {
               controller.onDestinationChanged(value);
             },
-
             labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
             selectedIndex: controller.selectedDestination.value,
             destinations: const [

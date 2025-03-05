@@ -16,8 +16,7 @@ class ElectronicMasbhaButton extends StatefulWidget {
   _ElectronicMasbhaButtonState createState() => _ElectronicMasbhaButtonState();
 }
 
-class _ElectronicMasbhaButtonState extends State<ElectronicMasbhaButton>
-    with SingleTickerProviderStateMixin {
+class _ElectronicMasbhaButtonState extends State<ElectronicMasbhaButton> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 

@@ -13,6 +13,5 @@ class SharedPreferencesService extends GetxService {
     return _prefs;
   }
 
-  static SharedPreferencesService get instance =>
-      Get.find<SharedPreferencesService>();
+  static SharedPreferencesService get instance => Get.find<SharedPreferencesService>();
 }

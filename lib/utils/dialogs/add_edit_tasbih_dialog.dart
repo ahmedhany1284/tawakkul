@@ -69,17 +69,14 @@ class AddEditTasbihDialog extends StatelessWidget {
   }
 
   void updateAddButtonStatus(String _) {
-    isAddButtonEnabled.value =
-        nameController.text.isNotEmpty && countController.text.isNotEmpty;
+    isAddButtonEnabled.value = nameController.text.isNotEmpty && countController.text.isNotEmpty;
   }
 
   void saveItem() {
     final name = nameController.text;
     final count = int.tryParse(countController.text) ?? 0;
     if (isEditing) {
-      Get.back(
-          result: ElectronicTasbihModel(
-              id: editItem!.id, name: name, count: count));
+      Get.back(result: ElectronicTasbihModel(id: editItem!.id, name: name, count: count));
     } else {
       Get.back(result: ElectronicTasbihModel(name: name, count: count));
     }

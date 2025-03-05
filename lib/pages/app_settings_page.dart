@@ -73,7 +73,7 @@ class AppSettingsPage extends GetView {
           ),
           ListTile(
             leading: const Icon(FlutterIslamicIcons.tasbih3),
-            onTap: () => Get.to(() =>  AzkarSettingsPage()),
+            onTap: () => Get.to(() => AzkarSettingsPage()),
             title: Text(
               'أذكار',
               style: titleTextStyle,

@@ -62,8 +62,7 @@ class PrayerTimePage extends GetView<PrayerTimeController> {
               // If coordinates are null, ask the user to grant location permission
               : Center(
                   child: MessageWithButtonWidget(
-                    title:
-                        'الرجاء السماح بصلاحيات الموقع مرة واحدة على الاقل للحصول على بيانات اوقات الصلاة',
+                    title: 'الرجاء السماح بصلاحيات الموقع مرة واحدة على الاقل للحصول على بيانات اوقات الصلاة',
                     buttonText: 'إعطاء صلاحية',
                     onTap: () async {
                       await controller.repository.getCoordinatesFromLocation();
@@ -87,36 +86,36 @@ class PrayerTimePage extends GetView<PrayerTimeController> {
     return CustomContainer(
       useMaterial: true,
       child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Row(
-          children: [
-            const Icon(Icons.location_on),
-            const Gap(5),
-            Flexible(  // Wrap with Flexible
-              child: FutureBuilder(
-                future: controller.repository.getLocationTextDecoded(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return Text(
-                      snapshot.data!,
-                      textDirection: TextDirection.ltr,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    );
-                  } else {
-                    return Text(
-                      controller.repository.getLocationTextCoded(),
-                      textDirection: TextDirection.ltr,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    );
-                  }
-                },
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            children: [
+              const Icon(Icons.location_on),
+              const Gap(5),
+              Flexible(
+                // Wrap with Flexible
+                child: FutureBuilder(
+                  future: controller.repository.getLocationTextDecoded(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return Text(
+                        snapshot.data!,
+                        textDirection: TextDirection.ltr,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    } else {
+                      return Text(
+                        controller.repository.getLocationTextCoded(),
+                        textDirection: TextDirection.ltr,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      );
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
-        )
-      ),
+            ],
+          )),
     );
   }
 
@@ -163,9 +162,7 @@ class PrayerTimePage extends GetView<PrayerTimeController> {
               return ListTile(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(
-                    bottom: index == prayerTime.length - 1
-                        ? const Radius.circular(9.0)
-                        : Radius.zero,
+                    bottom: index == prayerTime.length - 1 ? const Radius.circular(9.0) : Radius.zero,
                   ),
                 ),
                 dense: false,
@@ -195,9 +192,7 @@ class PrayerTimePage extends GetView<PrayerTimeController> {
                       prayer.isNotificationEnabled.value
                           ? Icons.notifications_active_outlined
                           : Icons.notifications_off_outlined,
-                      color: prayer.isNotificationEnabled.value
-                          ? theme.primaryColor
-                          : theme.hintColor,
+                      color: prayer.isNotificationEnabled.value ? theme.primaryColor : theme.hintColor,
                       size: 20,
                     ),
                   ],

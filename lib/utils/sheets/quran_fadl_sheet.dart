@@ -17,8 +17,7 @@ class FadlBottomSheet extends StatelessWidget {
       initialChildSize: 0.7,
       builder: (context, scrollController) {
         return ListView(children: const [
-          Text(
-              'daasddddddasdakjlsdjaklscnklasncklansdklnaklscjnakljscnakljcnklasnckljasncklancklacta',
+          Text('daasddddddasdakjlsdjaklscnklasncklansdklnaklscjnakljscnakljcnklasnckljasncklancklacta',
               style: TextStyle(fontSize: 150)),
         ]);
       },

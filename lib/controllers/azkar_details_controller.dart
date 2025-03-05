@@ -46,8 +46,7 @@ class AzkarDetailsController extends GetxController {
     if (progress.value == 0) {
       // delete progress from cache
       if (zkrType == AzkarPageType.azkar) {
-        await AzkarRepository()
-            .resetCountersForCategoryId(categoryId: categoryId!);
+        await AzkarRepository().resetCountersForCategoryId(categoryId: categoryId!);
       } else {
         AzkarRepository().resetCountersForType(zkrType: zkrType);
       }
@@ -57,16 +56,14 @@ class AzkarDetailsController extends GetxController {
 
   // Fetch data based on the specified AzkarPageType
   Future<void> fetchDataByType() async {
-    List<AzkarDetailModel> newData =
-        await AzkarRepository().getAzkarByType(zkrType: zkrType);
+    List<AzkarDetailModel> newData = await AzkarRepository().getAzkarByType(zkrType: zkrType);
     azkarData.value = newData;
     updateProgress();
   }
 
   // Fetch data based on the specified Category Id
   Future<void> fetchDataByCategoryId() async {
-    List<AzkarDetailModel> newData =
-        await AzkarRepository().getAzkarByCategoryId(categoryId: categoryId);
+    List<AzkarDetailModel> newData = await AzkarRepository().getAzkarByCategoryId(categoryId: categoryId);
     azkarData.value = newData;
     updateProgress();
   }
@@ -103,8 +100,7 @@ class AzkarDetailsController extends GetxController {
   Future<void> onResetAllButtonPressed() async {
     // Re-fetch the data from the repository
     if (zkrType == AzkarPageType.azkar) {
-      await AzkarRepository()
-          .resetCountersForCategoryId(categoryId: categoryId!);
+      await AzkarRepository().resetCountersForCategoryId(categoryId: categoryId!);
       await Future.delayed(const Duration(milliseconds: 250));
     } else {
       await AzkarRepository().resetCountersForType(zkrType: zkrType);

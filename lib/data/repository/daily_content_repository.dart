@@ -46,8 +46,7 @@ class DailyContentRepository {
 
     if (json != null) {
       // Parse the stored content
-      final DailyContentModel storedContent =
-          DailyContentModel.fromJson(json);
+      final DailyContentModel storedContent = DailyContentModel.fromJson(json);
 
       if (await isDailyContentExpired()) {
         // If the content is expired, fetch new data
@@ -112,8 +111,7 @@ class DailyContentRepository {
   }
 
   // Helper method to fetch random content from assets
-  Future<Map<String, dynamic>> _getRandomContentFromAssets(
-      String jsonPath) async {
+  Future<Map<String, dynamic>> _getRandomContentFromAssets(String jsonPath) async {
     final jsonFile = await rootBundle.loadString(jsonPath);
     final List<dynamic> jsonData = await json.decode(jsonFile);
     final randomNumber = Random().nextInt(jsonData.length - 1);

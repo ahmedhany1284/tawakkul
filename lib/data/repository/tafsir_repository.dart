@@ -26,8 +26,7 @@ class TafsirRepository {
     // Loop through each Tafsir in the list
     for (var element in tafsirs) {
       // Construct the full path of the Tafsir JSON file using the identifier
-      final fullPath =
-          '${await SaveLocationsPaths.getTafsirSaveLocationUrl()}${element.identifier!}.json';
+      final fullPath = '${await SaveLocationsPaths.getTafsirSaveLocationUrl()}${element.identifier!}.json';
       // Check if the file exists in the local storage
       if (await File(fullPath).exists()) {
         // Set the isDownloaded value of the Tafsir to true

@@ -20,7 +20,6 @@ class MainPage extends GetView<MainController> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
-
           title: const Text(appName),
           actions: [
             Column(
@@ -82,9 +81,7 @@ class MainPage extends GetView<MainController> {
                           iconData: activity['icon'],
                           onTap: activity['onTap'],
                         ),
-                        index == Activites.shortcuts.length - 1
-                            ? const Gap(5)
-                            : const Gap(0)
+                        index == Activites.shortcuts.length - 1 ? const Gap(5) : const Gap(0)
                       ],
                     );
                   },
@@ -99,10 +96,8 @@ class MainPage extends GetView<MainController> {
                       title: 'دعاء اليوم',
                     ),
                     DailyContentContainer(
-                      description:
-                          '${controller.dailyContent?.generalInfo['content']}',
-                      subtitle:
-                          '${controller.dailyContent?.generalInfo['title']}',
+                      description: '${controller.dailyContent?.generalInfo['content']}',
+                      subtitle: '${controller.dailyContent?.generalInfo['title']}',
                       title: 'معلومة',
                     ),
                     DailyContentContainer(

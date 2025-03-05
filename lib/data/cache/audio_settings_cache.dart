@@ -6,8 +6,7 @@ import '../../services/shared_preferences_service.dart';
 import '../models/quran_play_range_model.dart';
 
 class AudioSettingsCache {
-  static final SharedPreferences prefs =
-      SharedPreferencesService.instance.prefs;
+  static final SharedPreferences prefs = SharedPreferencesService.instance.prefs;
   // Method to save the Quran play range to cache for Range Selector
   // Future<void> setQuranPlayRange(
   //     {required QuranPlayRangeModel playRange}) async {

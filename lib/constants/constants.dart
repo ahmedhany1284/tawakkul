@@ -55,14 +55,12 @@ final List<Map<String, dynamic>> calculationMethodList = [
   },
   {
     "title": "لجنة رؤية الهلال",
-    "description":
-        "تستخدم زاوية الفجر 18 وزاوية العشاء 18. كما تستخدم قيم تعديل موسمية",
+    "description": "تستخدم زاوية الفجر 18 وزاوية العشاء 18. كما تستخدم قيم تعديل موسمية",
     "method": CalculationMethod.moon_sighting_committee.index,
   },
   {
     "title": "الطريقة المعروفة باسم ISNA",
-    "description":
-        "تم تضمين هذه الطريقة لأغراض الاكتمال، ولكنها غير مستحسنة. تستخدم زاوية الفجر 15 وزاوية العشاء 15",
+    "description": "تم تضمين هذه الطريقة لأغراض الاكتمال، ولكنها غير مستحسنة. تستخدم زاوية الفجر 15 وزاوية العشاء 15",
     "method": CalculationMethod.north_america.index,
   },
   {

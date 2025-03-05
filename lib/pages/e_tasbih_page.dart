@@ -36,14 +36,12 @@ class ElectronicTashbihPage extends GetView<ElectronicTasbihController> {
                     count: tasbih.count,
                     totalCounter: tasbih.totalCounter.value,
                     onTap: () {
-                      Get.to(() =>
-                          ElectronicTashbihCounterPage(eTasbihModel: tasbih));
+                      Get.to(() => ElectronicTashbihCounterPage(eTasbihModel: tasbih));
                     },
                     onDeletePressed: () => controller.deleteTasbih(tasbih.id!),
                     onEditPressed: () => controller.editTasbih(tasbih),
                   ),
-                  if (index == controller.tasbihData.length - 1)
-                    const SizedBox(height: 150),
+                  if (index == controller.tasbihData.length - 1) const SizedBox(height: 150),
                 ],
               ),
             );

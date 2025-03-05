@@ -24,8 +24,7 @@ class SurahVerseWidget extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5), // if you need this
               border: Border.all(
-                color:
-                Theme.of(context).colorScheme.onBackground.withAlpha(100),
+                color: Theme.of(context).colorScheme.onBackground.withAlpha(100),
                 width: 1,
               ),
             ),

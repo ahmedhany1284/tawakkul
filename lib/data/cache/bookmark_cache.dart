@@ -43,8 +43,7 @@ class BookmarkCache {
   // Delete a bookmark from the list and save to GetStorage
   Future<void> deleteBookmark(Bookmark bookmark) async {
     // Remove the bookmark from the observable list
-    bookmarks.removeWhere(
-        (b) => b.surah == bookmark.surah && b.verse == bookmark.verse);
+    bookmarks.removeWhere((b) => b.surah == bookmark.surah && b.verse == bookmark.verse);
 
     // Save the updated list of bookmarks to GetStorage
     await _saveBookmarks();
@@ -53,15 +52,13 @@ class BookmarkCache {
   // Save the current list of bookmarks to GetStorage
   Future<void> _saveBookmarks() async {
     // Convert the list of bookmarks to JSON format and store it in GetStorage
-    final bookmarksList =
-        bookmarks.map((bookmark) => bookmark.toJson()).toList();
+    final bookmarksList = bookmarks.map((bookmark) => bookmark.toJson()).toList();
     await _box.write(bookmarksKey, json.encode(bookmarksList));
   }
 
   // Check if a specific verse is bookmarked
   bool checkBookmark(Bookmark bookmark) {
     // Check if the provided bookmark exists in the list of bookmarks
-    return bookmarks
-        .any((b) => b.surah == bookmark.surah && b.verse == bookmark.verse);
+    return bookmarks.any((b) => b.surah == bookmark.surah && b.verse == bookmark.verse);
   }
 }

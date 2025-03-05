@@ -20,11 +20,9 @@ class DownloadService {
     }
     saveLocation += '$fileName.tmp';
     try {
-      await _dio.download(url, saveLocation,
-          onReceiveProgress: onReceiveProgress);
+      await _dio.download(url, saveLocation, onReceiveProgress: onReceiveProgress);
       // Rename the temporary file to the final destination
-      File(saveLocation)
-          .renameSync('${path.dirname(saveLocation)}/${path.basename(url)}');
+      File(saveLocation).renameSync('${path.dirname(saveLocation)}/${path.basename(url)}');
       // return the file successfully downloaded
       return true;
     } catch (e) {

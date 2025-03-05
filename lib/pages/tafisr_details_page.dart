@@ -27,9 +27,8 @@ class TafsirDetailsPage extends GetView<TafsirDetailsController> {
   // Build the app bar
   AppBar buildAppBar(BuildContext context) {
     return AppBar(
-      titleTextStyle: Get.isDarkMode
-          ? Theme.of(context).textTheme.titleMedium
-          : Theme.of(context).primaryTextTheme.titleMedium,
+      titleTextStyle:
+          Get.isDarkMode ? Theme.of(context).textTheme.titleMedium : Theme.of(context).primaryTextTheme.titleMedium,
       scrolledUnderElevation: 1,
       actions: [
         IconButton(
@@ -99,10 +98,7 @@ class TafsirDetailsPage extends GetView<TafsirDetailsController> {
   Widget buildVerseText() {
     return Text(
       getVerse(controller.surahNumber.value, controller.verseNumber.value),
-      style: const TextStyle(
-          fontFamily: 'Uthmanic_Script',
-          fontSize: 25,
-          fontWeight: FontWeight.bold),
+      style: const TextStyle(fontFamily: 'Uthmanic_Script', fontSize: 25, fontWeight: FontWeight.bold),
     );
   }
 
@@ -131,8 +127,7 @@ class TafsirDetailsPage extends GetView<TafsirDetailsController> {
                   shrinkWrap: true,
                   itemCount: controller.tafsirsData.length,
                   itemBuilder: (context, index) {
-                    if (controller.tafsirsUrls.length !=
-                        controller.tafsirsData.length) {}
+                    if (controller.tafsirsUrls.length != controller.tafsirsData.length) {}
                     TafsirData tafsirData = controller.tafsirsData[index];
                     return buildTafsirCard(context, tafsirData);
                   },
@@ -148,10 +143,7 @@ class TafsirDetailsPage extends GetView<TafsirDetailsController> {
           controller: ExpandableController(initialExpanded: true),
           header: Text(
             tafsirData.edition.name,
-            style: Theme.of(context)
-                .textTheme
-                .labelLarge!
-                .copyWith(color: Theme.of(context).colorScheme.onBackground),
+            style: Theme.of(context).textTheme.labelLarge!.copyWith(color: Theme.of(context).colorScheme.onBackground),
           ),
           collapsed: const Text(''),
           theme: ExpandableThemeData.combine(
@@ -176,8 +168,7 @@ class TafsirDetailsPage extends GetView<TafsirDetailsController> {
       children: [
         Obx(
           () {
-            return Text(tafsirData.tafsirLists[controller.surahNumber.value - 1]
-                [controller.verseNumber.value - 1]);
+            return Text(tafsirData.tafsirLists[controller.surahNumber.value - 1][controller.verseNumber.value - 1]);
           },
         ),
         Row(

@@ -22,8 +22,7 @@ class Hadith40DetailsPage extends StatelessWidget {
             // Display Hadith Topic
             Text(
               hadith.topic,
-              style: theme.textTheme.titleLarge!
-                  .copyWith(fontWeight: FontWeight.bold),
+              style: theme.textTheme.titleLarge!.copyWith(fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const Gap(15),

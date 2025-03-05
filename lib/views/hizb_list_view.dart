@@ -30,8 +30,7 @@ class HizbListView extends GetView {
 
   Widget buildHizbItem(BuildContext context, int hizbNumber) {
     final hizbData = hizbNumber.getHizbData;
-    final pageNumber =
-    getPageNumber(hizbData['surah']!.toInt(), hizbData['verse']!.toInt());
+    final pageNumber = getPageNumber(hizbData['surah']!.toInt(), hizbData['verse']!.toInt());
     return HizbItem(
       hizbNumber: hizbNumber,
       onTap: () async {

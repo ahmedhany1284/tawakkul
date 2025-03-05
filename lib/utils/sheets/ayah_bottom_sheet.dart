@@ -119,10 +119,8 @@ class AyahBottomSheet extends GetView<AyahBottomSheetController> {
                   padding: const EdgeInsets.only(right: 10),
                   child: Row(
                     children: [
-                      SurahVerseWidget(
-                          surah: verse.surahNumber, verse: verse.verseNumber),
-                      Text(
-                          ' -  الآية ${verse.verseNumber} -  ${word.textUthmani}'),
+                      SurahVerseWidget(surah: verse.surahNumber, verse: verse.verseNumber),
+                      Text(' -  الآية ${verse.verseNumber} -  ${word.textUthmani}'),
                     ],
                   ),
                 ),
@@ -198,18 +196,14 @@ class AyahBottomSheet extends GetView<AyahBottomSheetController> {
                   final controller = Get.find<TafsirDetailsController>();
                   controller.surahNumber.value = verse.surahNumber;
                   controller.verseNumber.value = verse.verseNumber;
-                  Get.to(() => const TafsirDetailsPage(),
-                      fullscreenDialog: true);
+                  Get.to(() => const TafsirDetailsPage(), fullscreenDialog: true);
                 } catch (e, stackTrace) {
                   log(e.toString(), stackTrace: stackTrace);
                 }
                 // Navigate to TafsirDetailsPage
                 Get.to(
                   () => const TafsirDetailsPage(),
-                  arguments: {
-                    'surahNumber': verse.surahNumber,
-                    'verseNumber': verse.verseNumber
-                  },
+                  arguments: {'surahNumber': verse.surahNumber, 'verseNumber': verse.verseNumber},
                   binding: TafsirDetailsBinding(),
                   fullscreenDialog: true,
                 );

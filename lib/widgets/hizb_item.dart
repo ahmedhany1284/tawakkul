@@ -33,9 +33,7 @@ class HizbItem extends StatelessWidget {
                           maxLines: 1,
                           style: const TextStyle(fontSize: 18),
                         ),
-                        SurahVerseWidget(
-                            surah: (hizbData['surah'] as int),
-                            verse: (hizbData['verse'] as int))
+                        SurahVerseWidget(surah: (hizbData['surah'] as int), verse: (hizbData['verse'] as int))
                       ],
                     ),
                   ],
@@ -45,16 +43,13 @@ class HizbItem extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    getVerse(hizbData['surah']!.toInt(),
-                        hizbData['verse']!.toInt())
+                    getVerse(hizbData['surah']!.toInt(), hizbData['verse']!.toInt())
                         .split(' ')
                         .take(4)
                         .toList()
                         .join(' ')
                         .replaceAll('۞', ''),
-                    style: const TextStyle(
-                        fontFamily: 'Uthmanic_Script',
-                        fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontFamily: 'Uthmanic_Script', fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

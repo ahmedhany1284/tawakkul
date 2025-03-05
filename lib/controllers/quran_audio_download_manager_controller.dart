@@ -10,18 +10,15 @@ class QuranAudioDownloadManagerController extends GetxController {
   final ExpandableController expandableController = ExpandableController();
 
   // Delete downloaded surah for a specific reader
-  void onDeleteSurah(
-      {required DownloadSurahModel surah, required QuranReader reader}) async {
-    QuranAudioDownloadHandler.deleteDownloadedSurah(
-        surahId: surah.id, readerIdentifier: reader.identifier);
+  void onDeleteSurah({required DownloadSurahModel surah, required QuranReader reader}) async {
+    QuranAudioDownloadHandler.deleteDownloadedSurah(surahId: surah.id, readerIdentifier: reader.identifier);
     surah.isDownloaded.value = false;
   }
 
   // Download all surahs for a specific reader
   void onDownloadAllPressed({required QuranReader reader}) async {
     // Retrieve surah download data if not already available
-    reader.surahs ??=
-        await ReadersRepository().getSurahDownloadData(reader: reader);
+    reader.surahs ??= await ReadersRepository().getSurahDownloadData(reader: reader);
 
     // Initialize surah download status for UI
     for (var i = 0; i < 114; i++) {
@@ -43,14 +40,12 @@ class QuranAudioDownloadManagerController extends GetxController {
   }
 
   // Download a single surah for a specific reader
-  Future<void> onSurahDownloadPressed(
-      {required int readerIndex, required DownloadSurahModel surah}) async {
+  Future<void> onSurahDownloadPressed({required int readerIndex, required DownloadSurahModel surah}) async {
     surah.isDownloading.value = true;
     surah.isPending.value = false;
 
     // Start downloading the single surah
-    surah.isDownloaded.value =
-        await QuranAudioDownloadHandler.downloadSingleSurah(
+    surah.isDownloaded.value = await QuranAudioDownloadHandler.downloadSingleSurah(
       surahId: surah.id - 1,
       reader: readers[readerIndex],
       surahProgress: (surahId, progress) {

@@ -64,9 +64,7 @@ Stack surahTitleWidget(
         'assets/svg/surah_title.svg',
         height: 26.5,
         theme: SvgTheme(
-          currentColor: isMarkerColored
-              ? theme.primaryColor
-              : theme.colorScheme.onBackground,
+          currentColor: isMarkerColored ? theme.primaryColor : theme.colorScheme.onBackground,
         ),
       ),
       Positioned(
@@ -76,9 +74,7 @@ Stack surahTitleWidget(
         right: 0,
         child: Align(
           alignment: Alignment.center,
-          child: surahNameInQcf(
-              surahNumber: surahNumber,
-              textColor: theme.colorScheme.onBackground),
+          child: surahNameInQcf(surahNumber: surahNumber, textColor: theme.colorScheme.onBackground),
         ),
       ),
     ],
@@ -86,8 +82,7 @@ Stack surahTitleWidget(
 }
 
 // surah Text widget to show the Surah title in qcf style
-Text surahNameInQcf(
-    {required int surahNumber, double? fontSize, Color? textColor}) {
+Text surahNameInQcf({required int surahNumber, double? fontSize, Color? textColor}) {
   return Text(
     '${surahNumber.toString().padLeft(3, '0')}surah',
     textScaler: TextScaler.noScaling,

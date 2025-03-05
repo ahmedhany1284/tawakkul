@@ -6,8 +6,7 @@ import '../../services/shared_preferences_service.dart';
 
 // A class for managing and caching Quran display settings using GetStorage.
 class QuranSettingsCache {
-  static final SharedPreferences prefs =
-      SharedPreferencesService.instance.prefs;
+  static final SharedPreferences prefs = SharedPreferencesService.instance.prefs;
 
   // Set the last page index in the cache.
   static void setLastPage({required int pageIndex}) {
@@ -94,7 +93,6 @@ class QuranSettingsCache {
   static double getStatusBarHeight() {
     return prefs.getDouble(headerHeightKey)!;
   }
-
 
   /// Overlay Settings Cache Methods
 

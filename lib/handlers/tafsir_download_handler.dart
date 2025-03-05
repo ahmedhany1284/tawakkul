@@ -12,8 +12,7 @@ class TafsirDownloadHandler {
   }
 
   Future<bool> downloadTafsir(
-      {required Tafsir tafsir,
-      required Function(int count, int total) onReceiveProgress}) async {
+      {required Tafsir tafsir, required Function(int count, int total) onReceiveProgress}) async {
     final saveLocation = await SaveLocationsPaths.getTafsirSaveLocationUrl();
     if (await Utils.checkForInternetConnection()) {
       if (await DownloadService().downloadFile(

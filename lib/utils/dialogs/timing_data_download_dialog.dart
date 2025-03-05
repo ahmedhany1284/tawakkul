@@ -12,8 +12,7 @@ class TimingDataDownloadDialog extends StatefulWidget {
   const TimingDataDownloadDialog({super.key, required this.reader});
   final QuranReader reader;
   @override
-  State<TimingDataDownloadDialog> createState() =>
-      _TimingDataDownloadDialogState();
+  State<TimingDataDownloadDialog> createState() => _TimingDataDownloadDialogState();
 }
 
 class _TimingDataDownloadDialogState extends State<TimingDataDownloadDialog> {

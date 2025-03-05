@@ -21,8 +21,7 @@ class TasbihWidget extends StatelessWidget {
   final String name;
   final int count;
   final int totalCounter;
-  Widget buildTextIconButton(IconData icon, String text, Function() onTap,
-      {iconSize = 20.0}) {
+  Widget buildTextIconButton(IconData icon, String text, Function() onTap, {iconSize = 20.0}) {
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -63,8 +62,7 @@ class TasbihWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Material(
-              borderRadius: const BorderRadius.only(
-                  topRight: Radius.circular(9), topLeft: Radius.circular(9)),
+              borderRadius: const BorderRadius.only(topRight: Radius.circular(9), topLeft: Radius.circular(9)),
               child: Row(
                 children: [
                   buildTextIconButton(
@@ -116,14 +114,12 @@ class TasbihWidget extends StatelessWidget {
                         style: theme.textTheme.labelMedium,
                       ),
                     ),
-                    const SizedBox(
-                        height: 45, child: VerticalDivider(width: 1)),
+                    const SizedBox(height: 45, child: VerticalDivider(width: 1)),
                   ],
                 ),
                 Row(
                   children: [
-                    const SizedBox(
-                        height: 45, child: VerticalDivider(width: 1)),
+                    const SizedBox(height: 45, child: VerticalDivider(width: 1)),
                     Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Text(

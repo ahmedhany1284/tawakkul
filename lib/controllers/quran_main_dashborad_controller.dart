@@ -6,8 +6,7 @@ import '../data/cache/quran_settings_cache.dart';
 import '../../../../routes/app_pages.dart';
 import '../../Views/quran_bookmarks_view.dart';
 
-class QuranMainDashboradController extends GetxController
-    with GetTickerProviderStateMixin {
+class QuranMainDashboradController extends GetxController with GetTickerProviderStateMixin {
   late RxString hintTextSearchBar = hintTexts.first.obs;
   late final TabController tabController;
   RxString surahSearchText = "".obs;
@@ -31,7 +30,7 @@ class QuranMainDashboradController extends GetxController
       Routes.QURAN_READING_PAGE,
       arguments: QuranNavigationArgumentModel(
         surahNumber: 0,
-        pageNumber:  QuranSettingsCache.getLastPage(),
+        pageNumber: QuranSettingsCache.getLastPage(),
         verseNumber: 0,
         highlightVerse: false,
       ),

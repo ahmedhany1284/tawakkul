@@ -15,8 +15,6 @@ class AsmaullahRepository {
   Future<AsmaullahModel> getRandomAsmOfAllah() async {
     final filePath = await rootBundle.loadString('assets/jsons/asmaullah.json');
     final List<dynamic> jsonData = await json.decode(filePath);
-    return jsonData
-        .map((e) => AsmaullahModel.fromJson(e))
-        .toList()[Random().nextInt(99)];
+    return jsonData.map((e) => AsmaullahModel.fromJson(e)).toList()[Random().nextInt(99)];
   }
 }

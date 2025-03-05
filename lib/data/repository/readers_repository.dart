@@ -10,8 +10,6 @@ import 'package:tawakkal/data/models/download_surah_model.dart';
 import '../models/quran_reader.dart';
 
 class ReadersRepository {
-
-
   // Fetch Quran readers from JSON file
   Future<List<QuranReader>> getQuranReaders() async {
     final jsonFile = await rootBundle.loadString(JsonPaths.quranReaders);
@@ -19,16 +17,13 @@ class ReadersRepository {
     return jsonData.map((e) => QuranReader.fromJson(e)).toList();
   }
 
- 
   // Get download data for all Surahs of the selected Quran reader
-  Future<List<DownloadSurahModel>> getSurahDownloadData(
-      {required QuranReader reader}) async {
+  Future<List<DownloadSurahModel>> getSurahDownloadData({required QuranReader reader}) async {
     await Future.delayed(const Duration(milliseconds: 500));
 
     List<DownloadSurahModel> surah = [];
     for (var i = 1; i <= 114; i++) {
-      final isSurahDownloaded =
-          await checkSurahFilesIfDownloaded(reader: reader, surahId: i);
+      final isSurahDownloaded = await checkSurahFilesIfDownloaded(reader: reader, surahId: i);
       surah.add(
         DownloadSurahModel(
           id: i,
@@ -44,10 +39,9 @@ class ReadersRepository {
   }
 
   // Check if files for a specific Surah of the selected Quran reader are downloaded
-  Future<bool> checkSurahFilesIfDownloaded(
-      {required QuranReader reader, required int surahId}) async {
-    final surahFolder = await SaveLocationsPaths.getAudioSaveLocationUrl(
-        surahId: surahId, readerIdentifier: reader.identifier);
+  Future<bool> checkSurahFilesIfDownloaded({required QuranReader reader, required int surahId}) async {
+    final surahFolder =
+        await SaveLocationsPaths.getAudioSaveLocationUrl(surahId: surahId, readerIdentifier: reader.identifier);
     Directory directory = Directory(surahFolder);
 
     if (directory.existsSync()) {
@@ -64,5 +58,4 @@ class ReadersRepository {
 
     return false;
   }
-
 }

@@ -21,8 +21,7 @@ import '../views/quran_search_view.dart';
 
 class QuranReadingController extends GetxController {
   // List to store Quran page models
-  RxList<QuranPageModel?> quranPages =
-      List<QuranPageModel?>.filled(604, null).obs;
+  RxList<QuranPageModel?> quranPages = List<QuranPageModel?>.filled(604, null).obs;
 
   // Current page number
   int pageNumber = 1;
@@ -47,8 +46,7 @@ class QuranReadingController extends GetxController {
   /// Parameters:
   /// - pageNumber: The page number to fetch Quran data for.
   /// - scrollToPage: A flag indicating whether to scroll to the specified page after fetching the data.
-  Future<void> fetchQuranPageData(
-      {required int pageNumber, required bool scrollToPage}) async {
+  Future<void> fetchQuranPageData({required int pageNumber, required bool scrollToPage}) async {
     // Calculate the index for the current page number.
     var pageIndex = pageNumber - 1;
 
@@ -67,9 +65,7 @@ class QuranReadingController extends GetxController {
     final int endPage = pageNumber + 2;
 
     // Iterate through the range of pages.
-    for (int currentPageNumber = startPage;
-        currentPageNumber <= endPage;
-        currentPageNumber++) {
+    for (int currentPageNumber = startPage; currentPageNumber <= endPage; currentPageNumber++) {
       // Check if the page number is within valid bounds (1 to 604).
       if (currentPageNumber < 1 || currentPageNumber > 604) {
         continue; // Skip invalid page numbers.
@@ -84,16 +80,14 @@ class QuranReadingController extends GetxController {
       }
 
       // Fetch the Quran page data using the repository for the current page number.
-      quranPages[currentPageIndex] = await QuranRepository()
-          .getQuranPageData(pageNumber: currentPageNumber);
+      quranPages[currentPageIndex] = await QuranRepository().getQuranPageData(pageNumber: currentPageNumber);
     }
 
     // Set the current page data to the last fetched page.
     currentPageData = quranPages[pageIndex];
 
     // Set the player play range for the audio player based on the current page data
-    AudioSettingsCache.setPlayerPlayRange(
-        surahNumber: currentPageData!.surahNumber);
+    AudioSettingsCache.setPlayerPlayRange(surahNumber: currentPageData!.surahNumber);
 
     // Notify listeners that the data has been updated.
     update();
@@ -104,23 +98,20 @@ class QuranReadingController extends GetxController {
   /// Parameters:
   /// - navigationDetails: The details for Quran navigation, including the page number,
   ///   verse number, surah number, and whether to highlight the verse.
-  Future<void> initPageData(
-      {QuranNavigationArgumentModel? navigationDetails}) async {
+  Future<void> initPageData({QuranNavigationArgumentModel? navigationDetails}) async {
     // If navigationDetails is null, use Get.arguments
     navigationDetails ??= Get.arguments;
 
     // Start loading the page data and then scroll to the required page
-    await fetchQuranPageData(
-        pageNumber: navigationDetails!.pageNumber, scrollToPage: true);
+    await fetchQuranPageData(pageNumber: navigationDetails!.pageNumber, scrollToPage: true);
 
     // If highlight verse is requested, then highlight the verse
     if (navigationDetails.highlightVerse) {
-      final targetVerse =
-          quranPages[navigationDetails.pageNumber - 1]!.verses.firstWhere(
-                (element) =>
-                    element.verseNumber == navigationDetails!.verseNumber &&
-                    navigationDetails.surahNumber == element.surahNumber,
-              );
+      final targetVerse = quranPages[navigationDetails.pageNumber - 1]!.verses.firstWhere(
+            (element) =>
+                element.verseNumber == navigationDetails!.verseNumber &&
+                navigationDetails.surahNumber == element.surahNumber,
+          );
       QuranUtils.highlightVerse(isHighlighted: targetVerse.isHighlighted);
     }
 
@@ -174,8 +165,7 @@ class QuranReadingController extends GetxController {
   /// initializes the page data for the selected bookmark.
   void handleBookmarkPage() async {
     // Navigate to the QuranBookmarksView and wait for the result
-    var navigationDetails =
-        await Get.to(QuranBookmarksView(), fullscreenDialog: true);
+    var navigationDetails = await Get.to(QuranBookmarksView(), fullscreenDialog: true);
 
     // Check if the result is of type QuranNavigationArgumentModel
     if (navigationDetails is QuranNavigationArgumentModel) {
@@ -189,8 +179,8 @@ class QuranReadingController extends GetxController {
   /// initializes the page data for the selected search result.
   void handleSearchPage() async {
     // Navigate to the QuranSearchView and wait for the result
-    var navigationDetails = await Get.to(() => const QuranSearchView(),
-        fullscreenDialog: true, binding: QuranSearchBinding());
+    var navigationDetails =
+        await Get.to(() => const QuranSearchView(), fullscreenDialog: true, binding: QuranSearchBinding());
 
     // Check if the result is of type QuranNavigationArgumentModel
     if (navigationDetails is QuranNavigationArgumentModel) {
@@ -216,14 +206,11 @@ class QuranReadingController extends GetxController {
     // Check if the current page is not null
     if (currentPage != null) {
       // Clear highlights for the all pages
-      QuranUtils.clearHighlightedVersesAndWords(
-          pages: quranPages.whereType<QuranPageModel>().toList());
+      QuranUtils.clearHighlightedVersesAndWords(pages: quranPages.whereType<QuranPageModel>().toList());
 
       // Set the new word to be highlighted
       final currentVerse = currentPage.verses.firstWhere(
-        (verse) =>
-            verse.verseNumber == verseNumber &&
-            verse.surahNumber == surahNumber,
+        (verse) => verse.verseNumber == verseNumber && verse.surahNumber == surahNumber,
       );
 
       // Check if the word is not already highlighted before setting it
@@ -254,14 +241,11 @@ class QuranReadingController extends GetxController {
     // Check if the current page is not null
     if (currentPage != null) {
       // Clear highlights for the all pages
-      QuranUtils.clearHighlightedVersesAndWords(
-          pages: quranPages.whereType<QuranPageModel>().toList());
+      QuranUtils.clearHighlightedVersesAndWords(pages: quranPages.whereType<QuranPageModel>().toList());
 
       // Set the new word to be highlighted
       final currentVerse = currentPage.verses.firstWhere(
-        (verse) =>
-            verse.verseNumber == verseNumber &&
-            verse.surahNumber == surahNumber,
+        (verse) => verse.verseNumber == verseNumber && verse.surahNumber == surahNumber,
       );
       final wordToHighlight = currentVerse.words[wordIndex];
 
@@ -280,8 +264,7 @@ class QuranReadingController extends GetxController {
     QuranSettingsCache.setLastPage(pageIndex: pageNumber);
 
     // Toggle fullscreen mode using QuranUtils, forcing it to true
-    await QuranUtils.toggleFullscreen(
-        isFullScreen: isFullScreenMode, force: true);
+    await QuranUtils.toggleFullscreen(isFullScreen: isFullScreenMode, force: true);
 
     // clear the user-selected player range
     AudioSettingsCache.setPlayRangeValidState(isValid: false);
@@ -299,8 +282,7 @@ class QuranReadingController extends GetxController {
           // Handle the 'دعاء ختم القرآن' item.
         },
         'page': () => showGoToPageSheet(currentPage: pageNumber),
-        'surah': () =>
-            showGoToSurahSheet(currentSurah: currentPageData!.surahNumber),
+        'surah': () => showGoToSurahSheet(currentSurah: currentPageData!.surahNumber),
         'juz': () => showGoToJuzSheet(currentJuz: currentPageData!.juzNumber),
         'bookmark': () => handleBookmarkPage(),
         'audio': () => Get.to(

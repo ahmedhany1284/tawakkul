@@ -30,13 +30,10 @@ class CalculationMethodSelectorPage extends GetView {
         itemCount: calculationMethodList.length,
         itemBuilder: (context, index) {
           var isSelected =
-              PrayerTimeCache.getCalculationMethodFromCache().index ==
-                  calculationMethodList[index]['method'];
+              PrayerTimeCache.getCalculationMethodFromCache().index == calculationMethodList[index]['method'];
           return ListTile(
             dense: true,
-            tileColor: isSelected
-                ? theme.colorScheme.surfaceVariant
-                : Colors.transparent,
+            tileColor: isSelected ? theme.colorScheme.surfaceVariant : Colors.transparent,
             leading: isSelected
                 ? Icon(
                     FluentIcons.checkmark_16_regular,
@@ -53,12 +50,10 @@ class CalculationMethodSelectorPage extends GetView {
             ),
             onTap: () async {
               // Update cache with the selected method index
-              PrayerTimeCache.saveCalculationMethodToCache(
-                  CalculationMethod.values[index]);
+              PrayerTimeCache.saveCalculationMethodToCache(CalculationMethod.values[index]);
               await repository.initPrayerTimes();
               // cancel all alarms and re schedule new alarm for next prayer
-              Get.find<NotificationAlarmHandler>()
-                  .cancelAllAndNextPrayerSchedule();
+              Get.find<NotificationAlarmHandler>().cancelAllAndNextPrayerSchedule();
               // Rebuild the widget to reflect the selection
               Get.forceAppUpdate();
             },

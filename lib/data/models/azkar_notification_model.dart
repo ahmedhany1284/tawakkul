@@ -5,7 +5,7 @@ class AzkarNotificationModel {
   final String description;
   final TimeOfDay time;
   final String payload;
-  
+
   AzkarNotificationModel({
     required this.title,
     required this.description,

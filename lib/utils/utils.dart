@@ -25,8 +25,7 @@ class Utils {
 
   static DateTime scheduleDateTime(TimeOfDay time) {
     final now = DateTime.now();
-    DateTime scheduledDateTime =
-        DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    DateTime scheduledDateTime = DateTime(now.year, now.month, now.day, time.hour, time.minute);
 
     if (scheduledDateTime.isBefore(now)) {
       // If the scheduled time is in the past, add one day

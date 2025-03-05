@@ -21,8 +21,7 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
     var theme = Theme.of(context);
     var titleTextStyle = theme.textTheme.titleSmall;
     var subtitleTextStyle = TextStyle(color: theme.hintColor);
-    var defaultSubtitleTextStyle =
-        theme.textTheme.labelMedium!.copyWith(color: theme.hintColor);
+    var defaultSubtitleTextStyle = theme.textTheme.labelMedium!.copyWith(color: theme.hintColor);
     return Scaffold(
       appBar: AppBar(
         titleTextStyle: theme.textTheme.titleMedium,
@@ -73,8 +72,7 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
                     style: subtitleTextStyle,
                   ),
                   value: controller.settingsModel.isAdaptiveView,
-                  onChanged: (value) =>
-                      controller.onDisplayOptionChanged(value),
+                  onChanged: (value) => controller.onDisplayOptionChanged(value),
                 );
               },
             ),
@@ -82,8 +80,7 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
               return IgnorePointer(
                   ignoring: !controller.settingsModel.isAdaptiveView,
                   child: Opacity(
-                    opacity:
-                        !controller.settingsModel.isAdaptiveView ? 0.5 : 1.0,
+                    opacity: !controller.settingsModel.isAdaptiveView ? 0.5 : 1.0,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -95,11 +92,9 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
                         ),
                         SliderTheme(
                           data: SliderTheme.of(context).copyWith(
-                            activeTrackColor:
-                                theme.colorScheme.primaryContainer,
+                            activeTrackColor: theme.colorScheme.primaryContainer,
                             inactiveTickMarkColor: theme.colorScheme.primary,
-                            inactiveTrackColor:
-                                theme.colorScheme.primaryContainer,
+                            inactiveTrackColor: theme.colorScheme.primaryContainer,
                           ),
                           child: GetBuilder<QuranSettingsController>(
                             builder: (controller) {
@@ -107,10 +102,8 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
                                 value: controller.settingsModel.displayFontSize,
                                 min: 25,
                                 max: 45,
-                                label: ArabicNumbers().convert(
-                                    '${controller.settingsModel.displayFontSize}'),
-                                onChanged: (value) =>
-                                    controller.onDisplayFontSizeChanged(value),
+                                label: ArabicNumbers().convert('${controller.settingsModel.displayFontSize}'),
+                                onChanged: (value) => controller.onDisplayFontSizeChanged(value),
                                 divisions: 4,
                               );
                             },
@@ -133,8 +126,7 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
                                     previewVerse,
                                     style: TextStyle(
                                       fontFamily: 'QCF_P596',
-                                      fontSize: controller
-                                          .settingsModel.displayFontSize,
+                                      fontSize: controller.settingsModel.displayFontSize,
                                     ),
                                   );
                                 },
@@ -158,9 +150,8 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
             ListTile(
               onTap: () => selectReaderSheet().then((value) {
                 controller.update();
-                Get.find<QuranAudioPlayerBottomBarController>()
-                    .selectedReader
-                    .value = QuranReaderCache.getSelectedReaderFromCache();
+                Get.find<QuranAudioPlayerBottomBarController>().selectedReader.value =
+                    QuranReaderCache.getSelectedReaderFromCache();
               }),
               title: Text(
                 'القارئ',
@@ -168,9 +159,7 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
               ),
               subtitle: GetBuilder<QuranSettingsController>(
                 builder: (controller) {
-                  return Text(
-                      QuranReaderCache.getSelectedReaderFromCache().name,
-                      style: subtitleTextStyle);
+                  return Text(QuranReaderCache.getSelectedReaderFromCache().name, style: subtitleTextStyle);
                 },
               ),
               dense: true,
@@ -200,7 +189,6 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
               ),
               dense: true,
             ),
-
             const Divider(),
             ListTile(
               title: Text(
@@ -250,8 +238,7 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
                               ),
                               trailing: SegmentedButton<bool>(
                                 selected: {isPageMode},
-                                onSelectionChanged: (value) =>
-                                    controller.onOverlayModeChanged(value.first),
+                                onSelectionChanged: (value) => controller.onOverlayModeChanged(value.first),
                                 segments: const [
                                   ButtonSegment(
                                     value: false,
@@ -283,8 +270,7 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
                                       child: Text('$value'),
                                     );
                                   }).toList(),
-                                  onChanged: (value) =>
-                                      controller.onNumberOfAyatChanged(value!),
+                                  onChanged: (value) => controller.onNumberOfAyatChanged(value!),
                                 ),
                               ),
 
@@ -303,8 +289,7 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
                                     child: Text('$value دقيقة'),
                                   );
                                 }).toList(),
-                                onChanged: (value) =>
-                                    controller.onIntervalMinutesChanged(value!),
+                                onChanged: (value) => controller.onIntervalMinutesChanged(value!),
                               ),
                             ),
 

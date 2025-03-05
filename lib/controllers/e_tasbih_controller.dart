@@ -8,8 +8,7 @@ import 'package:vibration/vibration.dart';
 import '../utils/dialogs/add_edit_tasbih_dialog.dart';
 
 class ElectronicTasbihController extends GetxController {
-  final RxList<ElectronicTasbihModel> tasbihData =
-      <ElectronicTasbihModel>[].obs;
+  final RxList<ElectronicTasbihModel> tasbihData = <ElectronicTasbihModel>[].obs;
 
   late final ElectronicTasbihRepository electronicTasbihRepository;
 
@@ -26,8 +25,7 @@ class ElectronicTasbihController extends GetxController {
       ),
     );
     if (result != null) {
-      await electronicTasbihRepository.updateTasbih(
-          electronicTasbihModel: result);
+      await electronicTasbihRepository.updateTasbih(electronicTasbihModel: result);
       fetchDate();
     }
   }
@@ -39,8 +37,7 @@ class ElectronicTasbihController extends GetxController {
       ),
     );
     if (result != null) {
-      await electronicTasbihRepository.insertTasbih(
-          electronicTasbihModel: result);
+      await electronicTasbihRepository.insertTasbih(electronicTasbihModel: result);
       fetchDate();
     }
   }
@@ -53,8 +50,7 @@ class ElectronicTasbihController extends GetxController {
     }
   }
 
-  void onResetCounterPressed(
-      {required ElectronicTasbihModel eTasbihModel}) async {
+  void onResetCounterPressed({required ElectronicTasbihModel eTasbihModel}) async {
     if (await showResetTasbihCountersDialog()) {
       resetCounter(eTasbihModel: eTasbihModel);
     }

@@ -12,8 +12,6 @@ import 'package:tawakkal/utils/quran_utils.dart';
 
 import '../data/cache/quran_settings_cache.dart';
 
-
-
 class QuranBackgroundService {
   // Essential Constants
   static const String OVERLAY_INTERVAL_KEY = 'quran_overlay_interval';
@@ -63,8 +61,7 @@ class QuranBackgroundService {
       await prefs.setBool(OVERLAY_ENABLED_KEY, false);
     }
     if (!prefs.containsKey(OVERLAY_FONT_SIZE_KEY)) {
-      await prefs.setDouble(
-          OVERLAY_FONT_SIZE_KEY, QuranSettingsCache.getQuranFontSize());
+      await prefs.setDouble(OVERLAY_FONT_SIZE_KEY, QuranSettingsCache.getQuranFontSize());
     }
     if (!prefs.containsKey(DISPLAY_TYPE_KEY)) {
       await prefs.setString(DISPLAY_TYPE_KEY, DISPLAY_TYPE_VERSE);
@@ -75,21 +72,16 @@ class QuranBackgroundService {
   }
 
   /// Settings Getters & Setters
-  static bool isServiceEnabled() =>
-      QuranSettingsCache.prefs.getBool(OVERLAY_ENABLED_KEY) ?? false;
+  static bool isServiceEnabled() => QuranSettingsCache.prefs.getBool(OVERLAY_ENABLED_KEY) ?? false;
 
-  static int getInterval() =>
-      QuranSettingsCache.prefs.getInt(OVERLAY_INTERVAL_KEY) ?? 30;
+  static int getInterval() => QuranSettingsCache.prefs.getInt(OVERLAY_INTERVAL_KEY) ?? 30;
 
   static double getOverlayFontSize() =>
-      QuranSettingsCache.prefs.getDouble(OVERLAY_FONT_SIZE_KEY) ??
-          QuranSettingsCache.getQuranFontSize();
+      QuranSettingsCache.prefs.getDouble(OVERLAY_FONT_SIZE_KEY) ?? QuranSettingsCache.getQuranFontSize();
 
-  static String getDisplayType() =>
-      QuranSettingsCache.prefs.getString(DISPLAY_TYPE_KEY) ?? DISPLAY_TYPE_VERSE;
+  static String getDisplayType() => QuranSettingsCache.prefs.getString(DISPLAY_TYPE_KEY) ?? DISPLAY_TYPE_VERSE;
 
-  static int getItemsCount() =>
-      QuranSettingsCache.prefs.getInt(ITEMS_COUNT_KEY) ?? 1;
+  static int getItemsCount() => QuranSettingsCache.prefs.getInt(ITEMS_COUNT_KEY) ?? 1;
 
   static Future<void> setServiceEnabled(bool enabled) async {
     await QuranSettingsCache.prefs.setBool(OVERLAY_ENABLED_KEY, enabled);
@@ -99,6 +91,7 @@ class QuranBackgroundService {
       stopService();
     }
   }
+
   static Future<void> setDisplayType(String type) async {
     await QuranSettingsCache.prefs.setString(DISPLAY_TYPE_KEY, type);
     if (isServiceEnabled()) {
@@ -134,8 +127,7 @@ class QuranBackgroundService {
           final verse = pageData.verses[random.nextInt(pageData.verses.length)];
           await showOverlay(verse: verse);
         }
-            } catch (e) {
-      }
+      } catch (e) {}
     }
 
     // Periodically update overlay:
@@ -152,15 +144,15 @@ class QuranBackgroundService {
             final verse = pageData.verses[random.nextInt(pageData.verses.length)];
             await showOverlay(verse: verse);
           }
-                }
-      } catch (e) {
-      }
+        }
+      } catch (e) {}
     });
 
     service.on('stopService').listen((event) {
       service.stopSelf();
     });
   }
+
   /// Overlay Display
 
   static Future<void> showOverlay({
@@ -252,14 +244,12 @@ class QuranBackgroundService {
         visibility: overlay.NotificationVisibility.visibilityPublic,
         overlayContent: overlayContent,
       );
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   /// Test Functions
   static Future<void> showTestOverlay() async {
     try {
-
       if (!await FlutterOverlayWindow.isPermissionGranted()) {
         final hasPermission = await FlutterOverlayWindow.requestPermission();
         if (!hasPermission!) {
@@ -271,9 +261,7 @@ class QuranBackgroundService {
       try {
         await FlutterOverlayWindow.closeOverlay();
         await Future.delayed(const Duration(milliseconds: 500));
-      } catch (e) {
-      }
-
+      } catch (e) {}
 
       String overlayContent = '''
       <!DOCTYPE html>
@@ -320,7 +308,6 @@ class QuranBackgroundService {
       </html>
     ''';
 
-
       await FlutterOverlayWindow.showOverlay(
         enableDrag: true,
         height: 200,
@@ -328,7 +315,7 @@ class QuranBackgroundService {
         alignment: OverlayAlignment.topCenter,
         positionGravity: PositionGravity.auto,
         overlayContent: overlayContent,
-        flag: OverlayFlag.defaultFlag ,
+        flag: OverlayFlag.defaultFlag,
       );
 
       await Future.delayed(const Duration(seconds: 1));
@@ -338,17 +325,15 @@ class QuranBackgroundService {
       // Auto close after 5 seconds
       await Future.delayed(const Duration(seconds: 5));
       await FlutterOverlayWindow.closeOverlay();
-
-    } catch (e) {
-    }
+    } catch (e) {}
   }
+
   static Future<void> checkOverlayStatus() async {
     try {
       final isPermissionGranted = await FlutterOverlayWindow.isPermissionGranted();
 
       final isActive = await FlutterOverlayWindow.isActive();
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   static Future<void> showSimpleOverlay() async {
@@ -379,8 +364,7 @@ class QuranBackgroundService {
         </div>
       ''',
       );
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 
   /// Service Control
@@ -401,10 +385,6 @@ class QuranBackgroundService {
   static void stopService() {
     try {
       FlutterBackgroundService().invoke('stopService');
-    } catch (e) {
-    }
+    } catch (e) {}
   }
 }
-
-
-

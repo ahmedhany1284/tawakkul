@@ -15,7 +15,6 @@ class AzkarCategoriesPage extends GetView<AzkarCategoriesController> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-
         title: const Text('أذكار المسلم'),
         titleTextStyle: Theme.of(context).primaryTextTheme.titleMedium,
       ),

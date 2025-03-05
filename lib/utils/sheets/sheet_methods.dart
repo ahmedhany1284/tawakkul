@@ -31,10 +31,8 @@ Future<void> selectReaderSheet() async {
               return CustomCircularProgressIndicator();
             } else {
               var readersList = snapshot.data![0];
-              var selectedReader =
-              QuranReaderCache.getSelectedReaderFromCache();
-              var selectedIndex = readersList.indexWhere(
-                      (element) => element.identifier == selectedReader.identifier);
+              var selectedReader = QuranReaderCache.getSelectedReaderFromCache();
+              var selectedIndex = readersList.indexWhere((element) => element.identifier == selectedReader.identifier);
               int? selectedReaderIndex;
 
               return Column(
@@ -42,8 +40,7 @@ Future<void> selectReaderSheet() async {
                 children: [
                   Expanded(
                     child: CupertinoPicker.builder(
-                      scrollController: FixedExtentScrollController(
-                          initialItem: selectedIndex),
+                      scrollController: FixedExtentScrollController(initialItem: selectedIndex),
                       childCount: readersList.length,
                       itemExtent: 50,
                       onSelectedItemChanged: (value) {
@@ -64,8 +61,7 @@ Future<void> selectReaderSheet() async {
                     child: FilledButton(
                       onPressed: () async {
                         if (selectedReaderIndex != null) {
-                          QuranReaderCache.saveSelectedReaderToCache(
-                              readersList[selectedReaderIndex!]);
+                          QuranReaderCache.saveSelectedReaderToCache(readersList[selectedReaderIndex!]);
                           Get.back();
                         }
                       },
@@ -107,8 +103,7 @@ void showGoToPageSheet({required currentPage}) {
         QuranReadingController controller = Get.find();
 
         // Start loading the page and then scroll to the page
-        controller.fetchQuranPageData(
-            pageNumber: selectedValue, scrollToPage: true);
+        controller.fetchQuranPageData(pageNumber: selectedValue, scrollToPage: true);
 
         // Close the bottom sheet
         Get.back();
@@ -142,8 +137,7 @@ void showGoToSurahSheet({required currentSurah}) {
         QuranReadingController controller = Get.find();
 
         // Start loading the page and then scroll to the page
-        controller.fetchQuranPageData(
-            pageNumber: getSurahPages(selectedValue)[0], scrollToPage: true);
+        controller.fetchQuranPageData(pageNumber: getSurahPages(selectedValue)[0], scrollToPage: true);
 
         // Close the bottom sheet
         Get.back();
@@ -180,12 +174,10 @@ void showGoToJuzSheet({required currentJuz}) {
         final surahAndVerses = getSurahAndVersesFromJuz(selectedValue);
 
         // Get the page number and navigate to it
-        final pageNumber = getPageNumber(
-            surahAndVerses.keys.first, surahAndVerses.values.first.first);
+        final pageNumber = getPageNumber(surahAndVerses.keys.first, surahAndVerses.values.first.first);
 
         // Start loading the page and then scroll to the page
-        controller.fetchQuranPageData(
-            pageNumber: pageNumber, scrollToPage: true);
+        controller.fetchQuranPageData(pageNumber: pageNumber, scrollToPage: true);
 
         // Close the bottom sheet
         Get.back();
@@ -218,8 +210,7 @@ void showVerseInfoBottomSheet({
 
   // Create and initialize AyahBottomSheetController
   var controller = Get.put(AyahBottomSheetController());
-  controller.bookmark =
-      Bookmark(surah: verse.surahNumber, verse: verse.verseNumber);
+  controller.bookmark = Bookmark(surah: verse.surahNumber, verse: verse.verseNumber);
 
   // Show the material modal bottom sheet
   await showMaterialModalBottomSheet(

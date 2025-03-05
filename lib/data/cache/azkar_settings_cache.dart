@@ -5,8 +5,7 @@ import '../../constants/cache_keys.dart';
 import '../../services/shared_preferences_service.dart';
 
 class AzkarSettingsCache {
-  static final SharedPreferences prefs =
-      SharedPreferencesService.instance.prefs;
+  static final SharedPreferences prefs = SharedPreferencesService.instance.prefs;
 
   // Setters
   static void setFontSize(double fontSize) {
@@ -48,20 +47,17 @@ class AzkarSettingsCache {
 
   static TimeOfDay getMorningTime() {
     final timeAsString = prefs.getString(morningTimeKey);
-    return _stringToTimeOfDay(timeAsString) ??
-        const TimeOfDay(hour: 8, minute: 0);
+    return _stringToTimeOfDay(timeAsString) ?? const TimeOfDay(hour: 8, minute: 0);
   }
 
   static TimeOfDay getNightTime() {
     final timeAsString = prefs.getString(nightTimeKey);
-    return _stringToTimeOfDay(timeAsString) ??
-        const TimeOfDay(hour: 20, minute: 0);
+    return _stringToTimeOfDay(timeAsString) ?? const TimeOfDay(hour: 20, minute: 0);
   }
 
   static TimeOfDay getSleepTime() {
     final timeAsString = prefs.getString(sleepTimeKey);
-    return _stringToTimeOfDay(timeAsString) ??
-        const TimeOfDay(hour: 23, minute: 0);
+    return _stringToTimeOfDay(timeAsString) ?? const TimeOfDay(hour: 23, minute: 0);
   }
 
   // Helper methods

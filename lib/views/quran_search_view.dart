@@ -46,8 +46,7 @@ class QuranSearchView extends GetView<QuranSearchController> {
                           children: [
                             // ListTile for each search result
                             ListTile(
-                              onTap: () =>
-                                  controller.onVersePressed(quranVerse),
+                              onTap: () => controller.onVersePressed(quranVerse),
                               title: Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: SearchHighlightText(
@@ -55,9 +54,7 @@ class QuranSearchView extends GetView<QuranSearchController> {
                                   searchText: controller.searchText.value,
                                 ),
                               ),
-                              subtitle: SurahVerseWidget(
-                                  surah: quranVerse.surahNumber,
-                                  verse: quranVerse.verseNumber),
+                              subtitle: SurahVerseWidget(surah: quranVerse.surahNumber, verse: quranVerse.verseNumber),
                             ),
                             // Divider between search results
                             if (index < searchResults.length - 1)
@@ -87,7 +84,7 @@ class SearchHighlightText extends StatelessWidget {
     this.searchRegExp,
     this.style,
     this.highlightStyle,
-  })  : assert(searchText == null || searchRegExp == null);
+  }) : assert(searchText == null || searchRegExp == null);
 
   final String text;
   final String? searchText;
@@ -99,9 +96,8 @@ class SearchHighlightText extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final inheritedWidget = SearchTextInheritedWidget.maybeOf(context);
-    RegExp? searchRegExp = searchText != null
-        ? RegExp(searchText!)
-        : (this.searchRegExp ?? inheritedWidget?.searchRegExp);
+    RegExp? searchRegExp =
+        searchText != null ? RegExp(searchText!) : (this.searchRegExp ?? inheritedWidget?.searchRegExp);
 
     if (searchRegExp == null || searchRegExp.pattern.isEmpty) {
       return Text(
@@ -113,12 +109,10 @@ class SearchHighlightText extends StatelessWidget {
         ((inheritedWidget?.highlightStyle) ??
             (style != null
                 ? style!.copyWith(
-                    color: inheritedWidget?.highlightColor ??
-                        theme.colorScheme.onBackground,
+                    color: inheritedWidget?.highlightColor ?? theme.colorScheme.onBackground,
                   )
                 : DefaultTextStyle.of(context).style.copyWith(
-                      color: inheritedWidget?.highlightColor ??
-                          theme.colorScheme.onBackground,
+                      color: inheritedWidget?.highlightColor ?? theme.colorScheme.onBackground,
                     )));
 
     final textSpans = <TextSpan>[];
@@ -135,8 +129,7 @@ class SearchHighlightText extends StatelessWidget {
       textSpans.add(
         TextSpan(
           text: text.substring(match.start, match.end),
-          style: highlightStyle.copyWith(
-              backgroundColor: theme.colorScheme.surfaceVariant),
+          style: highlightStyle.copyWith(backgroundColor: theme.colorScheme.surfaceVariant),
         ),
       );
       lastEnd = match.end;

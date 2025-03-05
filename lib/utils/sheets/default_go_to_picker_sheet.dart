@@ -31,18 +31,14 @@ class DefaultGoToSheet extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 20, right: 25, bottom: 5),
                 child: Text(
                   title,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyLarge!
-                      .copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
                 ),
               ),
               const Divider(),
               Expanded(
                 child: CupertinoPicker.builder(
                     itemExtent: 50,
-                    scrollController:
-                        FixedExtentScrollController(initialItem: initValue - 1),
+                    scrollController: FixedExtentScrollController(initialItem: initValue - 1),
                     childCount: childCount,
                     onSelectedItemChanged: (value) {
                       selectedValue = value + 1;

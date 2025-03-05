@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CustomPopupMenuItem {
-  static PopupMenuEntry<dynamic> build(
-      {required dynamic index,
-      required IconData iconData,
-      required String text}) {
+  static PopupMenuEntry<dynamic> build({required dynamic index, required IconData iconData, required String text}) {
     return PopupMenuItem(
       value: index,
       child: ListTile(

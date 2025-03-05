@@ -28,16 +28,13 @@ class NotificationAlarmHandler extends GetxController {
     scheduleAzkarAlarm();
   }
 
-
-
   // Cancel all alarms and schedule the next prayer alarm
   Future<void> cancelAllAndNextPrayerSchedule() async {
     // Cancel the existing prayer alarm (ID 1)
     await AndroidAlarmManager.cancel(1);
 
     // Schedule the alarm for the next prayer
-    schedulePrayerAlarm(
-        alarmTime: Get.find<PrayerTimeRepository>().getNextPrayer().fulldate);
+    schedulePrayerAlarm(alarmTime: Get.find<PrayerTimeRepository>().getNextPrayer().fulldate);
   }
 
   // Cancel all Azkar alarms
@@ -79,8 +76,7 @@ class NotificationAlarmHandler extends GetxController {
   }
 
   // Schedule a one-shot alarm for morning Azkar
-  static Future<void> scheduleMorningAzkarAlarm(
-      {required DateTime alarmDate}) async {
+  static Future<void> scheduleMorningAzkarAlarm({required DateTime alarmDate}) async {
     await AndroidAlarmManager.oneShotAt(
       alarmDate,
       3, // Alarm ID for morning Azkar
@@ -93,8 +89,7 @@ class NotificationAlarmHandler extends GetxController {
   }
 
   // Schedule a one-shot alarm for night Azkar
-  static Future<void> scheduleNightAzkarAlarm(
-      {required DateTime alarmDate}) async {
+  static Future<void> scheduleNightAzkarAlarm({required DateTime alarmDate}) async {
     await AndroidAlarmManager.oneShotAt(
       alarmDate,
       4, // Alarm ID for night Azkar
@@ -107,8 +102,7 @@ class NotificationAlarmHandler extends GetxController {
   }
 
   // Schedule a one-shot alarm for sleep Azkar
-  static Future<void> scheduleSleepAzkarAlarm(
-      {required DateTime alarmDate}) async {
+  static Future<void> scheduleSleepAzkarAlarm({required DateTime alarmDate}) async {
     await AndroidAlarmManager.oneShotAt(
       alarmDate,
       5, // Alarm ID for sleep Azkar
@@ -145,8 +139,7 @@ class NotificationAlarmHandler extends GetxController {
 
     // Show prayer notification if enabled
     var currentPrayer = prayerTimeRepository.getCurrentPrayer();
-    if (PrayerTimeCache.getPrayerNotificationMode(prayer: currentPrayer.type)
-        .isTrue) {
+    if (PrayerTimeCache.getPrayerNotificationMode(prayer: currentPrayer.type).isTrue) {
       await prayerTimeRepository.showPrayerNotification();
     }
 

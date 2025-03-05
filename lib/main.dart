@@ -1,4 +1,3 @@
-
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -72,9 +71,7 @@ void main() async {
 void overlayMain() {
   WidgetsFlutterBinding.ensureInitialized();
 
-
   FlutterOverlayWindow.overlayListener.listen((event) async {
-
     if (event != null) {
       try {
         if (event['type'] == 'verses') {
@@ -100,9 +97,7 @@ void overlayMain() {
             ),
           );
         }
-      } catch (e) {
-
-      }
+      } catch (e) {}
     }
   });
 }
@@ -235,8 +230,7 @@ class QuranOverlayView extends StatelessWidget {
                               ),
                               textAlign: TextAlign.center,
                             ),
-                            if (verses.last != verseData)
-                              const Divider(height: 24),
+                            if (verses.last != verseData) const Divider(height: 24),
                           ],
                         ),
                       );
@@ -384,16 +378,16 @@ class QuranPageOverlayView extends StatelessWidget {
     for (var verse in verses) {
       words.addAll(
         (verse['words'] as List).map((w) => Word(
-          id: w['id'],
-          verseId: w['verseId'],
-          wordType: w['wordType'],
-          textV1: w['textV1'],
-          position: w['position'] ?? 0,
-          textUthmani: w['textUthmani'] ?? '',
-          pageNumber: w['pageNumber'] ?? pageData['pageNumber'],
-          lineNumber: w['lineNumber'],
-          surahNumber: w['surahNumber'],
-        )),
+              id: w['id'],
+              verseId: w['verseId'],
+              wordType: w['wordType'],
+              textV1: w['textV1'],
+              position: w['position'] ?? 0,
+              textUthmani: w['textUthmani'] ?? '',
+              pageNumber: w['pageNumber'] ?? pageData['pageNumber'],
+              lineNumber: w['lineNumber'],
+              surahNumber: w['surahNumber'],
+            )),
       );
     }
     return words;

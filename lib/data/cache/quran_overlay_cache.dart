@@ -27,14 +27,11 @@ class QuranOverlayCache {
   static int getInterval() => _prefs.getInt(_overlayIntervalKey) ?? 10;
 
   // Setters that return Futures
-  static Future<bool> setLastVerseIndex(int index) =>
-      _prefs.setInt(_lastVerseIndexKey, index);
+  static Future<bool> setLastVerseIndex(int index) => _prefs.setInt(_lastVerseIndexKey, index);
 
-  static Future<bool> setLastPageNumber(int pageNumber) =>
-      _prefs.setInt(_lastPageNumberKey, pageNumber);
+  static Future<bool> setLastPageNumber(int pageNumber) => _prefs.setInt(_lastPageNumberKey, pageNumber);
 
-  static Future<bool> setOverlayEnabled(bool enabled) =>
-      _prefs.setBool(_overlayEnabledKey, enabled);
+  static Future<bool> setOverlayEnabled(bool enabled) => _prefs.setBool(_overlayEnabledKey, enabled);
 
   static Future<bool> setPageMode(bool pageMode) async {
     // When changing modes, reset the respective indices
@@ -46,11 +43,9 @@ class QuranOverlayCache {
     return _prefs.setBool(_overlayPageModeKey, pageMode);
   }
 
-  static Future<bool> setVerseCount(int count) =>
-      _prefs.setInt(_overlayVerseCountKey, count);
+  static Future<bool> setVerseCount(int count) => _prefs.setInt(_overlayVerseCountKey, count);
 
-  static Future<bool> setInterval(int minutes) =>
-      _prefs.setInt(_overlayIntervalKey, minutes);
+  static Future<bool> setInterval(int minutes) => _prefs.setInt(_overlayIntervalKey, minutes);
 
   // Method to clear all overlay settings
   static Future<void> clearOverlaySettings() async {

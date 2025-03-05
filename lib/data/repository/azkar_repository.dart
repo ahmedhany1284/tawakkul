@@ -31,8 +31,7 @@ class AzkarRepository {
   Future<void> resetCountersForCategoryId({required int categoryId}) async {
     // Update Azkar details table to reset counters for the specified type
     await _databaseService.updateDataQuery(
-      query:
-          "UPDATE $_azkarDetailsTable set counter = count, isDone = 0 where  categoryId = $categoryId",
+      query: "UPDATE $_azkarDetailsTable set counter = count, isDone = 0 where  categoryId = $categoryId",
     );
   }
 
@@ -79,8 +78,7 @@ class AzkarRepository {
   }
 
   // Fetch Azkar details by type from the database
-  Future<List<AzkarDetailModel>> _fetchAzkarDataByType(
-      AzkarPageType zkrType) async {
+  Future<List<AzkarDetailModel>> _fetchAzkarDataByType(AzkarPageType zkrType) async {
     var data = await _databaseService.readData(
       tableName: _azkarDetailsTable,
       where: 'zkr_type =?',
@@ -92,24 +90,19 @@ class AzkarRepository {
 
   // Check if there is previous progress for Azkar
   bool _hasPreviousProgress(List<AzkarDetailModel> azkarData) {
-    return azkarData
-        .any((element) => element.counter < element.count || element.isDone);
+    return azkarData.any((element) => element.counter < element.count || element.isDone);
   }
 
 // Fetch Azkar details by type from the database
-  Future<List<AzkarDetailModel>> _fetchAzkarDataByCategoryId(
-      int categoryId) async {
-    final data = await _databaseService.readData(
-        tableName: _azkarDetailsTable,
-        where: 'categoryId =?',
-        whereArgs: [categoryId]);
+  Future<List<AzkarDetailModel>> _fetchAzkarDataByCategoryId(int categoryId) async {
+    final data =
+        await _databaseService.readData(tableName: _azkarDetailsTable, where: 'categoryId =?', whereArgs: [categoryId]);
     // Map the data to AzkarDetailModel and return the list
     return data.map((e) => AzkarDetailModel.fromJson(e)).toList();
   }
 
   // Get Azkar details by category ID from the database
-  Future<List<AzkarDetailModel>> getAzkarByCategoryId(
-      {required categoryId}) async {
+  Future<List<AzkarDetailModel>> getAzkarByCategoryId({required categoryId}) async {
     var azkarData = await _fetchAzkarDataByCategoryId(categoryId);
     // Check if there is previous progress
     if (_hasPreviousProgress(azkarData)) {

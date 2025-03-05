@@ -34,7 +34,7 @@ class QuranUtils {
 
   // Get the height of the Quran page header, including status bar and toolbar
   static Future<double> getQuranPageHeaderHeight() async {
-    return kToolbarHeight ;
+    return kToolbarHeight;
     // + await StatusBarControl.getHeight + 5;
   }
 
@@ -87,9 +87,7 @@ class QuranUtils {
   }
 
   static String buildWordPronounceAudioUrl(
-      {required int surahNumber,
-      required int verseNumber,
-      required int wordPosition}) {
+      {required int surahNumber, required int verseNumber, required int wordPosition}) {
     final surahUrlIndex = surahNumber.toString().padLeft(3, '0');
     final verseUrlIndex = verseNumber.toString().padLeft(3, '0');
     final wordUrlIndex = wordPosition.toString().padLeft(3, '0');
@@ -130,9 +128,7 @@ class QuranUtils {
     required Color backgroundColor,
   }) {
     // If the verse or word is highlighted, change the background color; otherwise, make it transparent
-    return (isVerseHighlighted.value || isWordHighlighted.value)
-        ? backgroundColor
-        : Colors.transparent;
+    return (isVerseHighlighted.value || isWordHighlighted.value) ? backgroundColor : Colors.transparent;
   }
 
   // Check if the next line in the Quran is empty
@@ -177,14 +173,12 @@ class QuranUtils {
   }
 
   // Method to clear highlights for all words
-  static void clearHighlightedVersesAndWords(
-      {required List<QuranPageModel> pages}) async {
+  static void clearHighlightedVersesAndWords({required List<QuranPageModel> pages}) async {
     for (var page in pages) {
       for (final verse in page.verses) {
         verse.isHighlighted.value = false;
 
-        for (final word
-            in verse.words.where((word) => word.isHighlighted.value)) {
+        for (final word in verse.words.where((word) => word.isHighlighted.value)) {
           word.isHighlighted.value = false;
         }
       }

@@ -48,10 +48,8 @@ class QuranBookmarksView extends GetView {
                         children: [
                           ListTile(
                             onTap: () async {
-                              final pageNumber =
-                                  getPageNumber(bookmark.surah, bookmark.verse);
-                              var navigationDetails =
-                                  QuranNavigationArgumentModel(
+                              final pageNumber = getPageNumber(bookmark.surah, bookmark.verse);
+                              var navigationDetails = QuranNavigationArgumentModel(
                                 surahNumber: bookmark.surah,
                                 pageNumber: pageNumber,
                                 verseNumber: bookmark.verse,
@@ -60,8 +58,7 @@ class QuranBookmarksView extends GetView {
                               if (Get.previousRoute.contains('quran-reading')) {
                                 Get.back(result: navigationDetails);
                               } else {
-                                Get.toNamed(Routes.QURAN_READING_PAGE,
-                                    arguments: navigationDetails);
+                                Get.toNamed(Routes.QURAN_READING_PAGE, arguments: navigationDetails);
                               }
                             },
                             horizontalTitleGap: 30,
@@ -71,17 +68,13 @@ class QuranBookmarksView extends GetView {
                               child: Text(
                                 getVerse(bookmark.surah, bookmark.verse),
                                 maxLines: 5,
-                                style: const TextStyle(
-                                    fontFamily: 'Uthmanic_Script',
-                                    fontWeight: FontWeight.bold),
+                                style: const TextStyle(fontFamily: 'Uthmanic_Script', fontWeight: FontWeight.bold),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
                             subtitle: Row(
                               children: [
-                                SurahVerseWidget(
-                                    surah: bookmark.surah,
-                                    verse: bookmark.verse),
+                                SurahVerseWidget(surah: bookmark.surah, verse: bookmark.verse),
                                 const SizedBox(
                                   width: 5,
                                 ),

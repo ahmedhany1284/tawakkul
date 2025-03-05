@@ -9,8 +9,7 @@ import '../../constants/cache_keys.dart';
 import '../../services/shared_preferences_service.dart';
 
 class PrayerTimeCache {
-  static final SharedPreferences prefs =
-      SharedPreferencesService.instance.prefs;
+  static final SharedPreferences prefs = SharedPreferencesService.instance.prefs;
 
   /// Save the selected Madhab to cache.
   static void saveMadhabToCache(Madhab madhab) {
@@ -29,8 +28,7 @@ class PrayerTimeCache {
   }
 
   /// Save the selected calculation method to cache.
-  static void saveCalculationMethodToCache(
-      CalculationMethod calculationMethod) {
+  static void saveCalculationMethodToCache(CalculationMethod calculationMethod) {
     prefs.setString(calculationMethodKey, calculationMethod.name);
   }
 
@@ -61,8 +59,7 @@ class PrayerTimeCache {
     return fromJson(jsonDecode(coordinates));
   }
 
-  static void savePrayerNotificationMode(
-      {required Prayer prayer, required bool notificationMode}) async {
+  static void savePrayerNotificationMode({required Prayer prayer, required bool notificationMode}) async {
     prefs.setBool(prayer.name, notificationMode);
   }
 

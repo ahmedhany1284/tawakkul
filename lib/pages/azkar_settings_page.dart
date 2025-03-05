@@ -1,4 +1,3 @@
-
 import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:flutter/material.dart';
 
@@ -8,9 +7,6 @@ import 'package:get/get.dart';
 import '../constants/constants.dart';
 import '../controllers/azkar_settings_controller.dart';
 import '../widgets/custom_container.dart';
-
-
-
 
 class AzkarSettingsPage extends GetView {
   AzkarSettingsPage({super.key});
@@ -57,8 +53,7 @@ class AzkarSettingsPage extends GetView {
                     value: controller.azkarSettings.fontSize,
                     min: 16,
                     max: 32,
-                    label: ArabicNumbers()
-                        .convert('${controller.azkarSettings.fontSize}'),
+                    label: ArabicNumbers().convert('${controller.azkarSettings.fontSize}'),
                     onChanged: controller.updateFontSize,
                     divisions: 4,
                   ),
@@ -122,9 +117,7 @@ class AzkarSettingsPage extends GetView {
             ),
             ListTile(
               onTap: () => controller.selectTime(
-                  context,
-                  controller.azkarSettings.morningTime,
-                  (newTime) => controller.updateMorningTime(newTime)),
+                  context, controller.azkarSettings.morningTime, (newTime) => controller.updateMorningTime(newTime)),
               title: Text(
                 'وقت أذكار الصباح',
                 style: titleTextStyle,
@@ -137,9 +130,7 @@ class AzkarSettingsPage extends GetView {
             ),
             ListTile(
               onTap: () => controller.selectTime(
-                  context,
-                  controller.azkarSettings.nightTime,
-                  (newTime) => controller.updateNightTime(newTime)),
+                  context, controller.azkarSettings.nightTime, (newTime) => controller.updateNightTime(newTime)),
               title: Text(
                 'وقت أذكار المساء',
                 style: titleTextStyle,
@@ -152,9 +143,7 @@ class AzkarSettingsPage extends GetView {
             ),
             ListTile(
               onTap: () => controller.selectTime(
-                  context,
-                  controller.azkarSettings.sleepTime,
-                  (newTime) => controller.updateSleepTime(newTime)),
+                  context, controller.azkarSettings.sleepTime, (newTime) => controller.updateSleepTime(newTime)),
               title: Text(
                 'وقت أذكار النوم',
                 style: titleTextStyle,

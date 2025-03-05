@@ -7,8 +7,7 @@ import 'package:tawakkal/constants/cache_keys.dart';
 import '../../services/shared_preferences_service.dart';
 
 class AppSettingsCache {
-  static final SharedPreferences prefs =
-      SharedPreferencesService.instance.prefs;
+  static final SharedPreferences prefs = SharedPreferencesService.instance.prefs;
 
   static void setThemeMode({required ThemeMode themeMode}) {
     Get.changeThemeMode(themeMode);

@@ -43,8 +43,7 @@ class AzkarDetailModel {
       title: json['title'],
       text: json['text'] as String,
       note: json['note'],
-      azkarPageType: EnumToString.fromString(
-          AzkarPageType.values, json['zkr_type'] as String)!,
+      azkarPageType: EnumToString.fromString(AzkarPageType.values, json['zkr_type'] as String)!,
     )
       ..counter = json['counter'] as int
       ..isDone = json['isDone'] == 0 ? false : true;

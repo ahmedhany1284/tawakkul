@@ -2,11 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class CustomButtonBigIcon extends StatelessWidget {
-  const CustomButtonBigIcon(
-      {super.key,
-      required this.text,
-      required this.iconData,
-      required this.onTap});
+  const CustomButtonBigIcon({super.key, required this.text, required this.iconData, required this.onTap});
   final String text;
   final IconData iconData;
   final Function() onTap;

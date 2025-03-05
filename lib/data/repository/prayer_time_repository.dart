@@ -29,8 +29,7 @@ class PrayerTimeRepository extends GetxService {
       coordinates = await getCoordinatesFromLocation();
     }
     if (coordinates != null) {
-      parameters =
-          PrayerTimeCache.getCalculationMethodFromCache().getParameters();
+      parameters = PrayerTimeCache.getCalculationMethodFromCache().getParameters();
       madhab = PrayerTimeCache.getMadhabFromCache();
       parameters.madhab = madhab;
       prayerTimes = PrayerTimes.today(coordinates!, parameters);
@@ -62,8 +61,7 @@ class PrayerTimeRepository extends GetxService {
     // Get the next prayer time
     var currentPrayer = getCurrentPrayer();
     if (currentPrayer.isNotificationEnabled.value) {
-      await Get.find<NotificationService>()
-          .showPrayerNotification(currentPrayer);
+      await Get.find<NotificationService>().showPrayerNotification(currentPrayer);
     }
   }
 
@@ -73,8 +71,7 @@ class PrayerTimeRepository extends GetxService {
     bool? isNextPrayer,
   }) {
     // Calculate the adjusted prayer time based on the flags
-    DateTime prayerTime =
-        _calculatePrayerTime(prayer, isPrevPrayer, isNextPrayer);
+    DateTime prayerTime = _calculatePrayerTime(prayer, isPrevPrayer, isNextPrayer);
 
     // Format the prayer time as a string
     String formattedTime = _formatPrayerTime(prayerTime);
@@ -86,8 +83,7 @@ class PrayerTimeRepository extends GetxService {
     String amPmAr = _getAmPmAr(prayerTime);
 
     // Check if notification is enabled for the specific prayer
-    var isNotificationEnabled =
-        PrayerTimeCache.getPrayerNotificationMode(prayer: prayer);
+    var isNotificationEnabled = PrayerTimeCache.getPrayerNotificationMode(prayer: prayer);
     // Create and return the PrayerTimeModel
     return PrayerTimeModel(
       name: getPrayerNameArabic(prayer: prayer),
@@ -102,8 +98,7 @@ class PrayerTimeRepository extends GetxService {
   }
 
 // Calculate the adjusted prayer time based on flags
-  DateTime _calculatePrayerTime(
-      Prayer prayer, bool? isPrevPrayer, bool? isNextPrayer) {
+  DateTime _calculatePrayerTime(Prayer prayer, bool? isPrevPrayer, bool? isNextPrayer) {
     DateTime currentPrayerTime = prayerTimes!.timeForPrayer(prayer)!;
 
     if (isPrevPrayer ?? false) {
@@ -139,8 +134,7 @@ class PrayerTimeRepository extends GetxService {
     if (nextPrayer == Prayer.none) {
       nextPrayer = Prayer.fajr;
     }
-    return _createPrayerTimeModel(
-        prayer: nextPrayer, isNextPrayer: isNonePrayer);
+    return _createPrayerTimeModel(prayer: nextPrayer, isNextPrayer: isNonePrayer);
   }
 
   /// Get the [PrayerTimeModel] for the current prayer time.
@@ -151,8 +145,7 @@ class PrayerTimeRepository extends GetxService {
     if (isNonePrayer) {
       currentPrayer = Prayer.isha;
     }
-    return _createPrayerTimeModel(
-        prayer: currentPrayer, isPrevPrayer: isNonePrayer);
+    return _createPrayerTimeModel(prayer: currentPrayer, isPrevPrayer: isNonePrayer);
   }
 
   /// Get a list of [PrayerTimeModel] for all prayers.
@@ -176,8 +169,7 @@ class PrayerTimeRepository extends GetxService {
   Future<Coordinates> getCoordinatesFromLocation() async {
     Position? location = await Utils.getCurrentLocation();
     if (location != null) {
-      Coordinates coordinates =
-          Coordinates(location.latitude, location.longitude);
+      Coordinates coordinates = Coordinates(location.latitude, location.longitude);
       PrayerTimeCache.saveCoordinatesToCache(coordinates);
       this.coordinates = coordinates;
       return coordinates;
@@ -189,8 +181,7 @@ class PrayerTimeRepository extends GetxService {
   Future<String> getLocationTextDecoded() async {
     try {
       await setLocaleIdentifier('ar-SA');
-      List<Placemark> placemarks = await placemarkFromCoordinates(
-          coordinates!.latitude, coordinates!.longitude);
+      List<Placemark> placemarks = await placemarkFromCoordinates(coordinates!.latitude, coordinates!.longitude);
       if (placemarks.isNotEmpty) {
         if (placemarks.length > 2) {
           return placemarks[3].street!;

@@ -16,8 +16,7 @@ class JuzItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final surahAndVerses = quran.getSurahAndVersesFromJuz(juzNumber);
-    final currentPage = quran.getPageNumber(
-        surahAndVerses.keys.first, surahAndVerses.values.first.first);
+    final currentPage = quran.getPageNumber(surahAndVerses.keys.first, surahAndVerses.values.first.first);
 
     void goToPage(int page, int? surahNumber, int? verseNumber) async {
       Get.toNamed(
@@ -81,10 +80,7 @@ class JuzItem extends StatelessWidget {
                   SurahItem(
                     surahNumber: surahNumber,
                     onTap: () async {
-                      goToPage(
-                          quran.getPageNumber(
-                              surahNumber, surahAndVerses[surahNumber]![0]),
-                          surahNumber,
+                      goToPage(quran.getPageNumber(surahNumber, surahAndVerses[surahNumber]![0]), surahNumber,
                           surahAndVerses[surahNumber]![0]);
                     },
                   ),

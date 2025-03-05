@@ -45,15 +45,9 @@ class QuranMainDashboradPage extends GetView<QuranMainDashboradController> {
                 title: Obx(() {
                   return CustomSearchBar(
                     onChanged: (value) {
-                      controller.tabController.index == 0
-                          ? controller.surahSearchText.value = value
-                          : null;
-                      controller.tabController.index == 1
-                          ? controller.juzSearchText.value = value
-                          : null;
-                      controller.tabController.index == 2
-                          ? controller.hizbSearchText.value = value
-                          : null;
+                      controller.tabController.index == 0 ? controller.surahSearchText.value = value : null;
+                      controller.tabController.index == 1 ? controller.juzSearchText.value = value : null;
+                      controller.tabController.index == 2 ? controller.hizbSearchText.value = value : null;
                     },
                     hintText: controller.hintTextSearchBar.value,
                   );
@@ -63,8 +57,7 @@ class QuranMainDashboradPage extends GetView<QuranMainDashboradController> {
                   IconButton(
                     onPressed: controller.onLastPagePressed,
                     tooltip: 'اخر قراءة',
-                    icon:
-                        const Icon(FluentIcons.reading_mode_mobile_20_regular),
+                    icon: const Icon(FluentIcons.reading_mode_mobile_20_regular),
                   ),
                   IconButton(
                     tooltip: 'العلامات المرجعية',
