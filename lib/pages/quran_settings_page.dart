@@ -9,6 +9,7 @@ import 'package:tawakkal/data/cache/quran_overlay_cache.dart';
 import 'package:tawakkal/data/cache/quran_reader_cache.dart';
 import 'package:tawakkal/routes/app_pages.dart';
 import 'package:tawakkal/utils/sheets/sheet_methods.dart';
+import 'package:tawakkal/utils/time_units.dart';
 import 'package:tawakkal/widgets/custom_container.dart';
 import '../controllers/quran_audio_player_controller.dart';
 import '../controllers/quran_settings_controller.dart';
@@ -190,150 +191,19 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
               dense: true,
             ),
             const Divider(),
-            ListTile(
-              title: Text(
-                'التذكير بالقرآن',
-                style: titleTextStyle.copyWith(color: theme.primaryColor),
+            Card(
+              margin: EdgeInsets.all(8),
+              child: QuranSettingsView(
+                titleTextStyle: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                subtitleTextStyle: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[600],
+                ),
+                theme: theme,
               ),
-              dense: true,
-            ),
-            GetBuilder<QuranSettingsController>(
-              builder: (controller) {
-                final bool isEnabled = controller.settingsModel.overlaySettings.isEnabled;
-                final bool isPageMode = controller.settingsModel.overlaySettings.isPageMode;
-
-                return Column(
-                  children: [
-                    // Enable/Disable Switch
-                    SwitchListTile(
-                      dense: true,
-                      title: Text(
-                        'تفعيل التذكير',
-                        style: titleTextStyle,
-                      ),
-                      subtitle: Text(
-                        'عرض ${isPageMode ? "الصفحات" : "الآيات"} بشكل دوري',
-                        style: subtitleTextStyle,
-                      ),
-                      value: isEnabled,
-                      onChanged: (value) async {
-                        await controller.onOverlayEnabledChanged(value);
-                      },
-                    ),
-
-                    // Settings Section
-                    IgnorePointer(
-                      ignoring: !isEnabled,
-                      child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 200),
-                        opacity: isEnabled ? 1.0 : 0.5,
-                        child: Column(
-                          children: [
-                            // Display Mode Selection
-                            ListTile(
-                              title: Text('نوع العرض', style: titleTextStyle),
-                              subtitle: Text(
-                                isPageMode ? 'عرض صفحة كاملة' : 'عرض عدد محدد من الآيات',
-                                style: subtitleTextStyle,
-                              ),
-                              trailing: SegmentedButton<bool>(
-                                selected: {isPageMode},
-                                onSelectionChanged: (value) => controller.onOverlayModeChanged(value.first),
-                                segments: const [
-                                  ButtonSegment(
-                                    value: false,
-                                    label: Text('آيات'),
-                                    icon: Icon(Icons.format_list_numbered_rtl, size: 20),
-                                  ),
-                                  ButtonSegment(
-                                    value: true,
-                                    label: Text('صفحات'),
-                                    icon: Icon(Icons.book_outlined, size: 20),
-                                  ),
-                                ],
-                              ),
-                            ),
-
-                            // Verse Count Selection (Only show if in Ayat mode)
-                            if (!isPageMode)
-                              ListTile(
-                                title: Text('عدد الآيات', style: titleTextStyle),
-                                subtitle: Text(
-                                  'عدد الآيات التي سيتم عرضها في كل مرة',
-                                  style: subtitleTextStyle,
-                                ),
-                                trailing: DropdownButton<int>(
-                                  value: controller.settingsModel.overlaySettings.numberOfAyat,
-                                  items: [5, 10, 15, 20].map((int value) {
-                                    return DropdownMenuItem<int>(
-                                      value: value,
-                                      child: Text('$value'),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) => controller.onNumberOfAyatChanged(value!),
-                                ),
-                              ),
-
-                            // Time Interval Selection
-                            ListTile(
-                              title: Text('الفاصل الزمني', style: titleTextStyle),
-                              subtitle: Text(
-                                'الوقت بين كل تذكير والآخر',
-                                style: subtitleTextStyle,
-                              ),
-                              trailing: DropdownButton<int>(
-                                value: controller.settingsModel.overlaySettings.intervalMinutes,
-                                items: [5, 10, 15, 30, 60].map((int value) {
-                                  return DropdownMenuItem<int>(
-                                    value: value,
-                                    child: Text('$value دقيقة'),
-                                  );
-                                }).toList(),
-                                onChanged: (value) => controller.onIntervalMinutesChanged(value!),
-                              ),
-                            ),
-
-                            // Preview Button
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: ElevatedButton.icon(
-                                onPressed: () => controller.testOverlay(),
-                                icon: const Icon(Icons.preview),
-                                label: Text(
-                                  'معاينة ${isPageMode ? "الصفحة" : "الآيات"} القادمة',
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size(double.infinity, 48),
-                                  backgroundColor: theme.primaryColor,
-                                  foregroundColor: Colors.white,
-                                ),
-                              ),
-                            ),
-
-                            // Reset Progress Button
-                            Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: TextButton.icon(
-                                onPressed: () async {
-                                  await QuranOverlayCache.resetProgress();
-                                  controller.update();
-                                  Get.snackbar(
-                                    'تم',
-                                    'تم إعادة تعيين التقدم',
-                                    duration: const Duration(seconds: 2),
-                                  );
-                                },
-                                icon: const Icon(Icons.refresh),
-                                label: const Text('إعادة تعيين التقدم'),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
             ),
             ListTile(
               leading: Icon(
@@ -369,6 +239,251 @@ class QuranSettingsPage extends GetView<QuranSettingsController> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class QuranSettingsView extends StatelessWidget {
+  final TextStyle titleTextStyle;
+  final TextStyle subtitleTextStyle;
+  final ThemeData theme;
+
+  const QuranSettingsView({
+    Key? key,
+    required this.titleTextStyle,
+    required this.subtitleTextStyle,
+    required this.theme,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ListTile(
+          title: Text(
+            'التذكير بالقرآن',
+            style: titleTextStyle.copyWith(color: theme.primaryColor),
+          ),
+          dense: true,
+        ),
+        GetBuilder<QuranSettingsController>(
+          builder: (controller) {
+            final bool isEnabled = controller.settingsModel.overlaySettings.isEnabled;
+            final bool isPageMode = controller.settingsModel.overlaySettings.isPageMode;
+
+            return Column(
+              children: [
+                // Enable/Disable Switch
+                SwitchListTile(
+                  dense: true,
+                  title: Text(
+                    'تفعيل التذكير',
+                    style: titleTextStyle,
+                  ),
+                  subtitle: Text(
+                    'عرض ${isPageMode ? "الصفحات" : "الآيات"} بشكل دوري',
+                    style: subtitleTextStyle,
+                  ),
+                  value: isEnabled,
+                  onChanged: (value) async {
+                    await controller.onOverlayEnabledChanged(value);
+                  },
+                ),
+
+                // Settings Section
+                IgnorePointer(
+                  ignoring: !isEnabled,
+                  child: AnimatedOpacity(
+                    duration: const Duration(milliseconds: 200),
+                    opacity: isEnabled ? 1.0 : 0.5,
+                    child: Column(
+                      children: [
+                        // Display Mode Selection
+                        ListTile(
+                          title: Text('نوع العرض', style: titleTextStyle),
+                          subtitle: Text(
+                            isPageMode ? 'عرض صفحة كاملة' : 'عرض عدد محدد من الآيات',
+                            style: subtitleTextStyle,
+                          ),
+                          trailing: SegmentedButton<bool>(
+                            selected: {isPageMode},
+                            onSelectionChanged: (value) =>
+                                controller.onOverlayModeChanged(value.first),
+                            segments: const [
+                              ButtonSegment(
+                                value: false,
+                                label: Text('آيات'),
+                                icon: Icon(Icons.format_list_numbered_rtl, size: 20),
+                              ),
+                              ButtonSegment(
+                                value: true,
+                                label: Text('صفحات'),
+                                icon: Icon(Icons.book_outlined, size: 20),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Count Selection
+                        if (!isPageMode)
+                          ListTile(
+                            title: Text('عدد الآيات', style: titleTextStyle),
+                            subtitle: Text(
+                              'عدد الآيات التي سيتم عرضها في كل مرة',
+                              style: subtitleTextStyle,
+                            ),
+                            trailing: SizedBox(
+                              width: 80,
+                              child: TextFormField(
+                                initialValue: controller.settingsModel.overlaySettings.numberOfAyat.toString(),
+                                keyboardType: TextInputType.number,
+                                textAlign: TextAlign.center,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  suffixText: 'آية',
+                                ),
+                                onChanged: (value) {
+                                  final intValue = int.tryParse(value);
+                                  if (intValue != null && intValue > 0) {
+                                    controller.onNumberOfAyatChanged(intValue);
+                                  }
+                                },
+                              ),
+                            ),
+                          )
+                        else
+                          ListTile(
+                            title: Text('عدد الصفحات', style: titleTextStyle),
+                            subtitle: Text(
+                              'عدد الصفحات التي سيتم عرضها في كل مرة',
+                              style: subtitleTextStyle,
+                            ),
+                            trailing: SizedBox(
+                              width: 80,
+                              child: TextFormField(
+                                initialValue: controller.settingsModel.overlaySettings.numberOfPages.toString(),
+                                keyboardType: TextInputType.number,
+                                textAlign: TextAlign.center,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  suffixText: 'صفحة',
+                                ),
+                                onChanged: (value) {
+                                  final intValue = int.tryParse(value);
+                                  if (intValue != null && intValue > 0) {
+                                    controller.onNumberOfPagesChanged(intValue);
+                                  }
+                                },
+                              ),
+                            ),
+                          ),
+
+                        // Time Interval Selection
+                        ListTile(
+                          title: Text('الفاصل الزمني', style: titleTextStyle),
+                          subtitle: Text(
+                            'الوقت بين كل تذكير والآخر',
+                            style: subtitleTextStyle,
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                width: 60,
+                                child: TextFormField(
+                                  initialValue: controller.getIntervalValue().toString(),
+                                  keyboardType: TextInputType.number,
+                                  textAlign: TextAlign.center,
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  onChanged: (value) {
+                                    final intValue = int.tryParse(value);
+                                    if (intValue != null && intValue > 0) {
+                                      controller.updateIntervalValue(intValue);
+                                    }
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              GetBuilder<QuranSettingsController>(
+                                id: 'timeUnit', // Add this ID
+                                builder: (controller) {
+                                  return DropdownButton<TimeUnit>(
+                                    value: controller.selectedTimeUnit,
+                                    items: TimeUnit.values.map((unit) {
+                                      return DropdownMenuItem<TimeUnit>(
+                                        value: unit,
+                                        child: Text(
+                                          controller.getIntervalValue() > 10 ? unit.pluralLabel : unit.label,
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (unit) {
+                                      if (unit != null) {
+                                        controller.updateTimeUnit(unit);
+                                      }
+                                    },
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        // Preview Button
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: ElevatedButton.icon(
+                            onPressed: () => controller.testOverlay(),
+                            icon: const Icon(Icons.preview),
+                            label: Text(
+                              'معاينة ${isPageMode ? "الصفحة" : "الآيات"} القادمة',
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 48),
+                              backgroundColor: theme.primaryColor,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ),
+
+                        // Reset Progress Button
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              await QuranOverlayCache.resetProgress();
+                              controller.update();
+                              Get.snackbar(
+                                'تم',
+                                'تم إعادة تعيين التقدم',
+                                duration: const Duration(seconds: 2),
+                              );
+                            },
+                            icon: const Icon(Icons.refresh),
+                            label: const Text('إعادة تعيين التقدم'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ],
     );
   }
 }
