@@ -14,6 +14,8 @@ import 'package:tawakkal/data/models/quran_verse_model.dart';
 
 import 'dart:io';
 
+import 'package:tawakkal/utils/quran_utils.dart';
+
 class QuranOverlayService extends GetxService with WidgetsBindingObserver {
   // Constants
   static const String NOTIFICATION_CHANNEL_ID = 'quran_overlay_channel';
@@ -29,11 +31,13 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
   bool _isServiceEnabled = false;
   QuranReadingController? _quranController;
   final _overlayController = StreamController<List<String>>.broadcast();
-  final FlutterBackgroundService _backgroundService = FlutterBackgroundService();
+  final FlutterBackgroundService _backgroundService =
+      FlutterBackgroundService();
   DateTime? _lastOverlayCloseTime;
 
   // Getters
   Stream<List<String>> get overlayStream => _overlayController.stream;
+
   bool get isServiceEnabled => _isServiceEnabled;
 
   // MARK: - Lifecycle Methods
@@ -88,7 +92,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
           initialNotificationContent: 'جاري تشغيل خدمة التذكير',
           foregroundServiceNotificationId: NOTIFICATION_ID,
           autoStartOnBoot: true,
-
         ),
         iosConfiguration: IosConfiguration(
           autoStart: false,
@@ -100,6 +103,7 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       print('Error initializing background service: $e');
     }
   }
+
   // MARK: - Permission Handling
   Future<bool> checkAndRequestPermission() async {
     if (!Platform.isAndroid) return true;
@@ -156,10 +160,11 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       _timer?.cancel();
 
       // Set up new timer
-      final settings = Get.find<QuranSettingsController>().settingsModel.overlaySettings;
+      final settings =
+          Get.find<QuranSettingsController>().settingsModel.overlaySettings;
       _timer = Timer.periodic(
         Duration(minutes: settings.intervalMinutes),
-            (timer) async {
+        (timer) async {
           try {
             await showOverlay();
           } catch (e) {
@@ -177,6 +182,7 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       await QuranOverlayCache.setServiceActive(false);
     }
   }
+
   Future<void> stopService() async {
     try {
       // Cancel local timer
@@ -203,6 +209,7 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       print('Error stopping service: $e');
     }
   }
+
   Future<void> showOverlay() async {
     if (!await _ensurePermission()) return;
 
@@ -212,37 +219,71 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       if (settings.isPageMode) {
         // Get multiple pages if specified
         List<Map<String, dynamic>> pages = [];
-        for (int i = 0; i < settings.numberOfPages; i++) {
-          int nextPage = settings.lastDisplayedPageNumber + i + 1;
-          if (nextPage > 604) nextPage = 1; // Reset to first page if exceeded
 
+        // Start from the last displayed page + 1
+        int startPage = settings.lastDisplayedPageNumber + 1;
+        if (startPage > 604) startPage = 1;
+
+        // Fetch the requested number of pages
+        for (int i = 0; i < settings.numberOfPages; i++) {
+          int currentPage = startPage + i;
+          if (currentPage > 604) currentPage = currentPage - 604; // Wrap around to beginning
+
+          // Clear existing page data if any
+          _quranController!.quranPages[currentPage - 1] = null;
+
+          // Fetch new page data
           await _quranController!.fetchQuranPageData(
-            pageNumber: nextPage,
+            pageNumber: currentPage,
             scrollToPage: false,
           );
 
-          var pageData = _quranController!.quranPages[nextPage - 1];
+          var pageData = _quranController!.quranPages[currentPage - 1];
           if (pageData != null) {
             pages.add({
-              'pageNumber': pageData.pageNumber,
-              'surahNumber': pageData.surahNumber,
-              'juzNumber': pageData.juzNumber,
-              'verses': pageData.verses,
+              'page_number': pageData.pageNumber,
+              'surah_number': pageData.surahNumber,
+              'juz_number': pageData.juzNumber,
+              'hizb_number': pageData.hizbNumber,
+              'rub_el_hizb_number': pageData.rubElHizbNumber,
+              'verses': pageData.verses.map((verse) => {
+                'id': verse.id,
+                'verse_number': verse.verseNumber,
+                'verse_key': verse.verseKey,
+                'hizb_number': verse.hizbNumber,
+                'surah_number': verse.surahNumber,
+                'rub_el_hizb_number': verse.rubElhizbNumber,
+                'page_number': verse.pageNumber,
+                'juz_number': verse.juzNumber,
+                'text_uthmani_simple': verse.textUthmaniSimple,
+                'words': verse.words.map((word) => {
+                  'id': word.id,
+                  'verse_id': word.verseId,
+                  'word_type': word.wordType,
+                  'text_v1': word.textV1,
+                  'position': word.position,
+                  'text_uthmani': word.textUthmani,
+                  'page_number': word.pageNumber,
+                  'line_number': word.lineNumber,
+                  'surah_number': word.surahNumber,
+                }).toList(),
+              }).toList(),
             });
           }
         }
 
         // Update last displayed page
         settings.lastDisplayedPageNumber =
-            (settings.lastDisplayedPageNumber + settings.numberOfPages) % 604;
+            (startPage + settings.numberOfPages - 1) % 604;
         await QuranOverlayCache.setLastPageNumber(settings.lastDisplayedPageNumber);
 
-        // Show overlay with multiple pages
-        await _showOverlayWindow();
-        await FlutterOverlayWindow.shareData({
-          'type': 'pages',
-          'data': pages,
-        });
+        if (pages.isNotEmpty) {
+          await _showOverlayWindow();
+          await FlutterOverlayWindow.shareData({
+            'type': 'pages',
+            'data': pages,
+          });
+        }
       } else {
         // Get multiple verses if specified
         List<QuranVerseModel> versesToShow = await _getNextVerses(
@@ -266,103 +307,58 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
         await QuranOverlayCache.setLastVerseIndex(settings.lastDisplayedAyatIndex);
         await _showOverlayWindow();
 
+        // Group verses by surah for better display
+        Map<int, List<QuranVerseModel>> versesBySurah = {};
+        for (var verse in versesToShow) {
+          versesBySurah.putIfAbsent(verse.surahNumber, () => []).add(verse);
+        }
+
         await FlutterOverlayWindow.shareData({
           'type': 'verses',
           'data': versesToShow.map((verse) => {
-            'text': verse.textUthmaniSimple,
+            'id': verse.id,
+            'verse_number': verse.verseNumber,
+            'verse_key': verse.verseKey,
+            'hizb_number': verse.hizbNumber,
+            'surah_number': verse.surahNumber,
+            'rub_el_hizb_number': verse.rubElhizbNumber,
+            'page_number': verse.pageNumber,
+            'juz_number': verse.juzNumber,
+            'text_uthmani_simple': verse.textUthmaniSimple,
             'info': 'سورة ${_getSurahName(verse.surahNumber)} - آية ${verse.verseNumber}',
-            'surahNumber': verse.surahNumber,
-            'verseNumber': verse.verseNumber,
-            'pageNumber': verse.pageNumber,
             'wordType': verse.words.lastOrNull?.wordType ?? 'normal',
+            'isNewSurah': verse.verseNumber == 1,
+            'showBismillah': verse.verseNumber == 1 &&
+                verse.surahNumber != 1 &&
+                verse.surahNumber != 9,
+            'words': verse.words.map((word) => {
+              'id': word.id,
+              'verse_id': word.verseId,
+              'word_type': word.wordType,
+              'text_v1': word.textV1,
+              'position': word.position,
+              'text_uthmani': word.textUthmani,
+              'page_number': word.pageNumber,
+              'line_number': word.lineNumber,
+              'surah_number': word.surahNumber,
+            }).toList(),
+            'fontFamily': QuranUtils.getFontNameOfQuranPage(
+              pageNumber: verse.pageNumber,
+            ),
+            'surahName': _getSurahName(verse.surahNumber),
           }).toList(),
         });
       }
     } catch (e) {
       print('Error showing overlay: $e');
     }
-  }  Future<void> _showPageOverlay(QuranOverlaySettings settings) async {
-    try {
-      int nextPage = settings.lastDisplayedPageNumber + 1;
-      if (nextPage > 604) nextPage = 1;
-
-      if (_quranController == null) {
-        _quranController = Get.find<QuranReadingController>();
-      }
-
-      await _quranController!.fetchQuranPageData(
-        pageNumber: nextPage,
-        scrollToPage: false,
-      );
-
-      var pageData = _quranController!.quranPages[nextPage - 1];
-      if (pageData == null) return;
-
-      settings.lastDisplayedPageNumber = nextPage;
-      await QuranOverlayCache.setLastPageNumber(nextPage);
-
-      await _showOverlayWindow();
-
-      await FlutterOverlayWindow.shareData({
-        'type': 'page',
-        'data': {
-          'pageNumber': pageData.pageNumber,
-          'surahNumber': pageData.surahNumber,
-          'juzNumber': pageData.juzNumber,
-          'verses': pageData.verses.map((verse) => {
-            'id': verse.id,
-            'surahNumber': verse.surahNumber,
-            'verseNumber': verse.verseNumber,
-            'words': verse.words.map((word) => {
-              'id': word.id,
-              'textV1': word.textV1,
-              'lineNumber': word.lineNumber,
-              'wordType': word.wordType,
-              'verseId': word.verseId,
-            }).toList(),
-          }).toList(),
-        }
-      });
-    } catch (e) {
-      print('Error showing page overlay: $e');
-    }
   }
 
-  Future<void> _showAyatOverlay(QuranOverlaySettings settings) async {
-    List<QuranVerseModel> versesToShow = await _getNextVerses(
-      settings.lastDisplayedAyatIndex,
-      settings.numberOfAyat,
-      false,
-    );
 
-    if (versesToShow.isEmpty) {
-      settings.lastDisplayedAyatIndex = 0;
-      versesToShow = await _getNextVerses(0, settings.numberOfAyat, false);
-    }
-
-    if (versesToShow.isEmpty) return;
-
-    settings.lastDisplayedAyatIndex += versesToShow.length;
-    if (settings.lastDisplayedAyatIndex >= _totalVerses) {
-      settings.lastDisplayedAyatIndex = 0;
-    }
-
-    await QuranOverlayCache.setLastVerseIndex(settings.lastDisplayedAyatIndex);
-    await _showOverlayWindow();
-
-    await FlutterOverlayWindow.shareData({
-      'type': 'verses',
-      'data': versesToShow.map((verse) => {
-        'text': verse.textUthmaniSimple,
-        'info': 'سورة ${_getSurahName(verse.surahNumber)} - آية ${verse.verseNumber}',
-        'surahNumber': verse.surahNumber,
-        'verseNumber': verse.verseNumber,
-        'pageNumber': verse.pageNumber,
-        'wordType': verse.words.lastOrNull?.wordType ?? 'normal',
-      }).toList(),
-    });
+  String _getSurahName(int surahNumber) {
+    // You might want to use a proper surah names list
+    return "سورة $surahNumber";
   }
-
   Future<void> _showOverlayWindow() async {
     try {
       if (await FlutterOverlayWindow.isActive()) {
@@ -371,7 +367,7 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       }
 
       await FlutterOverlayWindow.showOverlay(
-        enableDrag: false ,
+        enableDrag: false,
         height: WindowSize.matchParent,
         width: WindowSize.matchParent,
         alignment: OverlayAlignment.bottomCenter,
@@ -385,6 +381,7 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       print('Error showing overlay window: $e');
     }
   }
+
 
   // MARK: - Background Service
   @pragma('vm:entry-point')
@@ -430,26 +427,24 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       print('Error in background service: $e');
     }
   }
+
   @pragma('vm:entry-point')
   static Future<bool> onIosBackground(ServiceInstance service) async {
     return true;
   }
 
   // MARK: - Helper Methods
-  static Future<void> showOverlayWithSettings(Map<String, dynamic> settings) async {
+  static Future<void> showOverlayWithSettings(
+      Map<String, dynamic> settings) async {
     final instance = Get.find<QuranOverlayService>();
     await instance.showOverlay();
   }
 
-  String _getSurahName(int surahNumber) {
-    return "سورة $surahNumber";
-  }
-
   Future<List<QuranVerseModel>> _getNextVerses(
-      int startIndex,
-      int count,
-      bool isPageMode,
-      ) async {
+    int startIndex,
+    int count,
+    bool isPageMode,
+  ) async {
     try {
       if (_quranController == null) return [];
 
@@ -472,7 +467,9 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
           int startVerse = startIndex % 15;
           var pageVerses = pageData.verses;
 
-          for (int i = startVerse; i < pageVerses.length && remainingCount > 0; i++) {
+          for (int i = startVerse;
+              i < pageVerses.length && remainingCount > 0;
+              i++) {
             verses.add(pageVerses[i]);
             remainingCount--;
           }
@@ -498,7 +495,7 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
         }
         break;
       case AppLifecycleState.paused:
-      // Ensure service keeps running in background if enabled
+        // Ensure service keeps running in background if enabled
         if (_isServiceEnabled) {
           _backgroundService.invoke('keepAlive');
         }

@@ -54,7 +54,9 @@ Future<void> initializeBackgroundService() async {
     ),
   );
 }
+
 const String CHANNEL = "com.quran.khatma/overlay";
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -155,7 +157,7 @@ class AppLifecycleObserver with WidgetsBindingObserver {
         }
         break;
       case AppLifecycleState.paused:
-      // App going to background, ensure service keeps running if enabled
+        // App going to background, ensure service keeps running if enabled
         if (settings.isEnabled) {
           final isRunning = await FlutterBackgroundService().isRunning();
           if (!isRunning) {
@@ -168,6 +170,7 @@ class AppLifecycleObserver with WidgetsBindingObserver {
     }
   }
 }
+
 @pragma('vm:entry-point')
 void overlayMain() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -186,14 +189,16 @@ void overlayMain() {
               ),
             ),
           );
-        } else if (event['type'] == 'pages') { // Changed from 'page' to 'pages'
+        } else if (event['type'] == 'pages') {
+          // Changed from 'page' to 'pages'
           final pages = List<Map<String, dynamic>>.from(event['data']);
           runApp(
             MaterialApp(
               debugShowCheckedModeBanner: false,
               home: Directionality(
                 textDirection: TextDirection.rtl,
-                child: QuranPageOverlayView(pages: pages), // Updated to use pages parameter
+                child: QuranPageOverlayView(
+                    pages: pages), // Updated to use pages parameter
               ),
             ),
           );
@@ -215,8 +220,6 @@ class QuranOverlayView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final groupedVerses = groupVersesBySurah(verses);
-
     return Material(
       color: Colors.black.withOpacity(0.5),
       child: SafeArea(
@@ -240,33 +243,11 @@ class QuranOverlayView extends StatelessWidget {
                 _buildHeader(),
                 const Divider(height: 1),
                 Expanded(
-                  child: PageView.builder(
-                    itemCount: groupedVerses.length,
-                    reverse: true,
-                    controller: PageController(initialPage: 0),
-                    itemBuilder: (context, pageIndex) {
-                      final surahVerses = groupedVerses[pageIndex];
-                      return CustomScrollView(
-                        slivers: [
-                          SliverToBoxAdapter(
-                            child: _buildSurahHeader(surahVerses.first),
-                          ),
-                          SliverPadding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                            sliver: SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                    (context, index) => _buildVerse(surahVerses[index]),
-                                childCount: surahVerses.length,
-                              ),
-                            ),
-                          ),
-                          // Add bottom padding
-                          const SliverPadding(
-                            padding: EdgeInsets.only(bottom: 16.0),
-                          ),
-                        ],
-                      );
-                    },
+                  child: FittedBox(
+                    fit: BoxFit.fitHeight,
+                    child: Column(
+                      children: _buildQuranLines(verses),
+                    ),
                   ),
                 ),
               ],
@@ -277,62 +258,55 @@ class QuranOverlayView extends StatelessWidget {
     );
   }
 
-  List<List<Map<String, dynamic>>> groupVersesBySurah(List<Map<String, dynamic>> verses) {
-    Map<int, List<Map<String, dynamic>>> surahGroups = {};
+  List<Widget> _buildQuranLines(List<Map<String, dynamic>> verses) {
+    List<Widget> lines = [];
+    int currentSurah = -1;
 
     for (var verse in verses) {
-      final surahNumber = verse['surahNumber'] as int;
-      surahGroups.putIfAbsent(surahNumber, () => []).add(verse);
-    }
-
-    return surahGroups.values.toList();
-  }
-
-  Widget _buildSurahHeader(Map<String, dynamic> firstVerse) {
-    if (firstVerse['verseNumber'] == 1) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: Column(
-          children: [
-            Text(
-              '${firstVerse['surahNumber'].toString().padLeft(3, '0')}surah',
-              style: const TextStyle(
-                fontFamily: 'SURAHNAMES',
-                fontSize: 40,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            if (firstVerse['surahNumber'] != 1 && firstVerse['surahNumber'] != 9)
-              const Text(
-                'ﰡ',
-                style: TextStyle(
-                  fontFamily: 'QCFBSML',
-                  fontSize: 30,
+      // Check if this is a new surah
+      if (verse['surahNumber'] != currentSurah) {
+        currentSurah = verse['surahNumber'];
+        if (verse['verseNumber'] == 1) {
+          lines.add(
+            Column(
+              children: [
+                const SizedBox(height: 16),
+                Text(
+                  '${verse['surahNumber'].toString().padLeft(3, '0')}surah',
+                  style: const TextStyle(
+                    fontFamily: 'SURAHNAMES',
+                    fontSize: 40,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-            const SizedBox(height: 16),
-          ],
-        ),
-      );
-    }
-    return const SizedBox.shrink();
-  }
+                const SizedBox(height: 16),
+                if (verse['surahNumber'] != 1 && verse['surahNumber'] != 9)
+                  const Text(
+                    'ﰡ',
+                    style: TextStyle(
+                      fontFamily: 'QCFBSML',
+                      fontSize: 30,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                const SizedBox(height: 16),
+              ],
+            ),
+          );
+        }
+      }
 
-  Widget _buildVerse(Map<String, dynamic> verse) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          RichText(
+      // Add verse text
+      lines.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+          child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
               style: const TextStyle(
-                height: 1.8,
+                height: 2.0,
                 fontFamily: 'QCF_P596',
-                fontSize: 24,
+                fontSize: 28,
                 color: Colors.black,
               ),
               children: [
@@ -342,24 +316,17 @@ class QuranOverlayView extends StatelessWidget {
                     text: ' ${verse['verseNumber']} ',
                     style: const TextStyle(
                       color: Colors.teal,
-                      fontSize: 18,
+                      fontSize: 22,
                     ),
                   ),
               ],
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            verse['info'],
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
+        ),
+      );
+    }
+
+    return lines;
   }
 
   Widget _buildHeader() {
@@ -388,123 +355,6 @@ class QuranOverlayView extends StatelessWidget {
               ),
             ],
           ),
-          Row(
-            children: [
-              IconButton(
-                onPressed: () async {
-                  await FlutterOverlayWindow.closeOverlay();
-                  final controller = Get.find<QuranSettingsController>();
-                  await controller.onOverlayClosed();
-                },
-                icon: const Icon(Icons.close),
-                padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-class QuranPageOverlayView extends StatelessWidget {
-  final List<Map<String, dynamic>> pages;
-
-  const QuranPageOverlayView({
-    super.key,
-    required this.pages,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.black.withOpacity(0.5),
-      child: Center(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(12.0),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.2),
-                blurRadius: 10,
-                spreadRadius: 5,
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              _buildHeader(pages[0]),
-              const Divider(height: 1),
-              Expanded(
-                child: PageView.builder(
-                  itemCount: pages.length,
-                  reverse: true,
-                  controller: PageController(initialPage: 0),
-                  itemBuilder: (context, index) {
-                    return SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          if (index > 0) _buildPageInfo(pages[index]),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16.0,
-                              vertical: 8.0,
-                            ),
-                            child: FittedBox(
-                              fit: BoxFit.fitWidth,
-                              child: Column(
-                                children: _buildQuranLines(pages[index]['verses']),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(Map<String, dynamic> firstPage) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(12),
-          topRight: Radius.circular(12),
-        ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                'تذكير بالقرآن',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                'صفحة ${firstPage['pageNumber']} - جزء ${firstPage['juzNumber']}',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-            ],
-          ),
           IconButton(
             onPressed: () async {
               await FlutterOverlayWindow.closeOverlay();
@@ -519,80 +369,289 @@ class QuranPageOverlayView extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildPageInfo(Map<String, dynamic> pageData) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        'صفحة ${pageData['pageNumber']} - جزء ${pageData['juzNumber']}',
-        style: TextStyle(
-          fontSize: 14,
-          color: Colors.grey[600],
+class QuranPageOverlayView extends StatelessWidget {
+  final List<Map<String, dynamic>> pages;
+
+  const QuranPageOverlayView({
+    super.key,
+    required this.pages,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.black.withOpacity(0.5),
+      child: SafeArea(
+        child: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.0),
+            ),
+            child: Column(
+              children: [
+                _buildHeader(),
+                const Divider(height: 1),
+                Expanded(
+                  child: PageView.builder(
+                    itemCount: pages.length,
+                    reverse: true,
+                    controller: PageController(initialPage: 0),
+                    itemBuilder: (context, pageIndex) {
+                      final pageData = pages[pageIndex];
+                      final pageNumber = pageData['page_number'] as int? ?? 0;
+
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          // Show strokes for odd pages
+                          if (pageNumber > 0 && pageNumber % 2 != 0)
+                            _buildPageStrokes(false),
+
+                          // Page content
+                          Expanded(
+                            child: Column(
+                              children: [
+                                // Page header with surah names and juz info
+                                _buildPageHeader(pageData),
+
+                                // Quran text
+                                Expanded(
+                                  child: FittedBox(
+                                    fit: BoxFit.fitHeight,
+                                    child: Column(
+                                      children: _buildQuranLines(
+                                          pageData['verses'] ?? []),
+                                    ),
+                                  ),
+                                ),
+
+                                // Page number
+                                _buildPageNumber(pageNumber),
+                              ],
+                            ),
+                          ),
+
+                          // Show strokes for even pages
+                          if (pageNumber > 0 && pageNumber % 2 == 0)
+                            _buildPageStrokes(true),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
   }
 
+  Widget _buildPageStrokes(bool isEven) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        for (var i = 0; i < 4; i++)
+          VerticalDivider(
+            thickness: i == 3 ? 2 : 1.5,
+            width: i == 3 ? 2 : 3,
+          ),
+      ].reversed.toList(),
+    );
+  }
+
+  Widget _buildPageHeader(Map<String, dynamic> pageData) {
+    final pageNumber = pageData['page_number'] as int? ?? 0;
+    final juzNumber = pageData['juz_number'] as int? ?? 0;
+    final surahNumber = pageData['surah_number'] as int? ?? 0;
+
+    return SizedBox(
+      height: 30,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 25),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Surah names
+            Text(
+              'سورة $surahNumber',
+              style: const TextStyle(fontSize: 12),
+            ),
+            // Juz info
+            Text(
+              'الجزء $juzNumber',
+              style: const TextStyle(fontSize: 12),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPageNumber(int pageNumber) {
+    return Container(
+      height: 40,
+      alignment: Alignment.center,
+      child: Text(
+        '$pageNumber',
+        style: const TextStyle(fontSize: 16),
+      ),
+    );
+  }
+
   List<Widget> _buildQuranLines(List<dynamic> verses) {
-    List<Word> allWords = _convertWords(verses);
-    List<Widget> lines = [];
+    try {
+      List<Word> allWords = _convertWords(verses);
+      List<Widget> lines = [];
 
-    Map<int, List<Word>> wordsByLine = {};
-    for (var word in allWords) {
-      wordsByLine.putIfAbsent(word.lineNumber, () => []).add(word);
-    }
+      // Group words by line number
+      Map<int, List<Word>> wordsByLine = {};
+      for (var word in allWords) {
+        wordsByLine.putIfAbsent(word.lineNumber, () => []).add(word);
+      }
 
-    for (int lineNumber = 1; lineNumber <= 15; lineNumber++) {
-      List<Word> lineWords = wordsByLine[lineNumber] ?? [];
-      if (lineWords.isNotEmpty) {
-        lines.add(
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                style: const TextStyle(
-                  height: 2.0,
-                  fontFamily: 'QCF_P596',
-                  fontSize: 28,
-                  color: Colors.black,
+      // Build 15 lines per page
+      for (int lineNumber = 1; lineNumber <= 15; lineNumber++) {
+        List<Word> lineWords = wordsByLine[lineNumber] ?? [];
+
+        // Handle empty lines for surah headers
+        if (lineWords.isEmpty) {
+          // Check if we need to show surah header
+          var nextLineWords = wordsByLine[lineNumber + 1] ?? [];
+          if (nextLineWords.isNotEmpty &&
+              nextLineWords.first.verseId == 1 &&
+              nextLineWords.first.surahNumber != null) {
+            lines.add(_buildSurahHeader(nextLineWords.first.surahNumber ?? 1));
+          } else {
+            lines.add(const SizedBox(height: 50)); // Empty line spacing
+          }
+        } else {
+          lines.add(
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  style: const TextStyle(
+                    height: 2.0,
+                    fontFamily: 'QCF_P596',
+                    fontSize: 28,
+                    color: Colors.black,
+                  ),
+                  children: lineWords.map((word) {
+                    return TextSpan(
+                      text: '${word.textV1} ',
+                      style: TextStyle(
+                        color:
+                            word.wordType == 'end' ? Colors.teal : Colors.black,
+                        fontSize: word.wordType == 'end' ? 22 : 28,
+                      ),
+                    );
+                  }).toList(),
                 ),
-                children: lineWords.map((word) {
-                  return TextSpan(
-                    text: '${word.textV1} ',
-                    style: TextStyle(
-                      color: word.wordType == 'end' ? Colors.teal : Colors.black,
-                      fontSize: word.wordType == 'end' ? 22 : 28,
-                    ),
-                  );
-                }).toList(),
               ),
             ),
-          ),
-        );
+          );
+        }
       }
-    }
 
-    return lines;
+      return lines;
+    } catch (e) {
+      print('Error building Quran lines: $e');
+      return [];
+    }
   }
 
   List<Word> _convertWords(List<dynamic> verses) {
     List<Word> words = [];
-    for (var verse in verses) {
-      words.addAll(
-        (verse['words'] as List).map((w) => Word(
-          id: w['id'],
-          verseId: w['verseId'],
-          wordType: w['wordType'],
-          textV1: w['textV1'],
-          position: w['position'] ?? 0,
-          textUthmani: w['textUthmani'] ?? '',
-          pageNumber: w['pageNumber'] ?? verse['pageNumber'],
-          lineNumber: w['lineNumber'],
-          surahNumber: w['surahNumber'],
-        )),
-      );
+    try {
+      for (var verse in verses) {
+        final List<dynamic> verseWords = verse['words'] ?? [];
+        words.addAll(
+          verseWords.map((w) => Word(
+                id: w['id'],
+                verseId: w['verse_id'],
+                wordType: w['word_type'],
+                textV1: w['text_v1'],
+                position: w['position'],
+                textUthmani: w['text_uthmani'],
+                pageNumber: w['page_number'],
+                lineNumber: w['line_number'],
+                surahNumber: w['surah_number'],
+              )),
+        );
+      }
+    } catch (e) {
+      print('Error converting words: $e');
     }
     return words;
+  }
+
+  Widget _buildSurahHeader(int surahNumber) {
+    return Column(
+      children: [
+        const SizedBox(height: 16),
+        Text(
+          '${surahNumber.toString().padLeft(3, '0')}surah',
+          style: const TextStyle(
+            fontFamily: 'SURAHNAMES',
+            fontSize: 40,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 16),
+        if (surahNumber != 1 && surahNumber != 9)
+          const Text(
+            'ﰡ',
+            style: TextStyle(
+              fontFamily: 'QCFBSML',
+              fontSize: 30,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(12),
+          topRight: Radius.circular(12),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            'تذكير بالقرآن',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          IconButton(
+            onPressed: () async {
+              await FlutterOverlayWindow.closeOverlay();
+              final controller = Get.find<QuranSettingsController>();
+              await controller.onOverlayClosed();
+            },
+            icon: const Icon(Icons.close),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
+      ),
+    );
   }
 }
