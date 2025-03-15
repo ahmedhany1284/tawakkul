@@ -290,8 +290,6 @@ class QuranSettingsView extends StatelessWidget {
                     await controller.onOverlayEnabledChanged(value);
                   },
                 ),
-
-                // Settings Section
                 IgnorePointer(
                   ignoring: !isEnabled,
                   child: AnimatedOpacity(

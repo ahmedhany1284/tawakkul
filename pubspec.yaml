@@ -68,6 +68,9 @@ dependencies:
   live_activities: ^2.3.0
   workmanager: ^0.5.2
   numberpicker: ^2.1.2
+
+  cached_network_image: ^3.4.1
+
 dev_dependencies: 
   flutter_test: 
     sdk: flutter

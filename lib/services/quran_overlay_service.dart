@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
@@ -368,17 +369,20 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
 
       await FlutterOverlayWindow.showOverlay(
         enableDrag: false,
-        height: WindowSize.matchParent,
+        height: 2000,
         width: WindowSize.matchParent,
-        alignment: OverlayAlignment.bottomCenter,
+        alignment: OverlayAlignment.center,
         positionGravity: PositionGravity.none,
         visibility: NotificationVisibility.visibilityPublic,
-        flag: OverlayFlag.defaultFlag,
+        flag: OverlayFlag.focusPointer,
+        startPosition: OverlayPosition(0, -20),
       );
 
       await Future.delayed(const Duration(milliseconds: 100));
     } catch (e) {
-      print('Error showing overlay window: $e');
+      if (kDebugMode) {
+        print('Error showing overlay window: $e');
+      }
     }
   }
 
