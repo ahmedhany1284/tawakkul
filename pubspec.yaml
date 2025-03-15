@@ -84,6 +84,9 @@ flutter:
     - assets/jsons/
     - assets/jsons/lottie/
     - assets/surah/
+    - assets/images/warsh/data/
+    - assets/images/warsh/
+    - assets/images/
   uses-material-design: true
   fonts: 
     - family: Uthmanic_Script
