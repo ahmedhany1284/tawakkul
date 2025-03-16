@@ -27,6 +27,7 @@ class QuranSettingsController extends GetxController {
     }
   }
 
+
   void updateIntervalValue(int value) {
     try {
       _intervalValue = value;
@@ -37,40 +38,37 @@ class QuranSettingsController extends GetxController {
     }
   }
 
-  void updateTimeUnit(TimeUnit unit) {
+
+  void updateTimeUnit(TimeUnit unit, {int? newValue}) {
     try {
-      // Convert current value to minutes before changing unit
-      final currentMinutes = selectedTimeUnit.toMinutes(_intervalValue);
+      print('Updating time unit to: $unit');
+      print('Before update: selectedTimeUnit = $selectedTimeUnit, _intervalValue = $_intervalValue');
+
+      // If a new value is provided, use it; otherwise, use the current value
+      int valueToUse = newValue ?? _intervalValue;
 
       // Update unit
       selectedTimeUnit = unit;
+      print('After setting new unit: selectedTimeUnit = $selectedTimeUnit');
 
-      // Convert minutes back to new unit value
-      switch (unit) {
-        case TimeUnit.seconds:
-          _intervalValue = currentMinutes * 60;
-          break;
-        case TimeUnit.minutes:
-          _intervalValue = currentMinutes;
-          break;
-        case TimeUnit.hours:
-          _intervalValue = (currentMinutes / 60).round();
-          break;
-        case TimeUnit.days:
-          _intervalValue = (currentMinutes / (24 * 60)).round();
-          break;
-      }
+      // Set the new interval value
+      _intervalValue = valueToUse;
+      print('After setting new interval value: _intervalValue = $_intervalValue');
 
-      // Update the service and cache
-      onIntervalMinutesChanged(currentMinutes);
+      // Convert the new value to minutes and update the settings
+      final minutes = selectedTimeUnit.toMinutes(valueToUse);
+      onIntervalMinutesChanged(minutes);
 
-      // Force UI update
-      Get.forceAppUpdate();
-      update(['timeUnit']); // Add an ID to the update
+      print('Before calling update: selectedTimeUnit = $selectedTimeUnit, _intervalValue = $_intervalValue');
+      update(['timeUnit', 'intervalValue']);
+      print('After calling update: selectedTimeUnit = $selectedTimeUnit, _intervalValue = $_intervalValue');
+
+      Get.forceAppUpdate(); // Force a full UI update
     } catch (e) {
       print('Error in updateTimeUnit: $e');
     }
   }
+
   // MARK: - Basic Settings Methods
   void onMarkerColorSwitched(bool value) async {
     settingsModel.isMarkerColored = value;
@@ -195,10 +193,9 @@ class QuranSettingsController extends GetxController {
     }
   }
 
+
   void onIntervalMinutesChanged(int minutes) async {
     try {
-      settingsModel.overlaySettings.intervalMinutes = minutes;
-
       // Update the interval value and time unit based on the new minutes
       if (minutes >= 24 * 60) {
         selectedTimeUnit = TimeUnit.days;
@@ -206,13 +203,14 @@ class QuranSettingsController extends GetxController {
       } else if (minutes >= 60) {
         selectedTimeUnit = TimeUnit.hours;
         _intervalValue = (minutes / 60).round();
-      } else if (minutes >= 1) {
+      } else {
         selectedTimeUnit = TimeUnit.minutes;
         _intervalValue = minutes;
-      } else {
-        selectedTimeUnit = TimeUnit.seconds;
-        _intervalValue = minutes * 60;
       }
+
+      // Update settings model
+      settingsModel.overlaySettings.intervalValue = _intervalValue;
+      settingsModel.overlaySettings.timeUnit = selectedTimeUnit;
 
       // Restart service if it's running
       if (settingsModel.overlaySettings.isEnabled) {
@@ -222,12 +220,11 @@ class QuranSettingsController extends GetxController {
       }
 
       await _updateSettingsCache();
-      update();
+      update(['timeUnit', 'intervalValue']); // Update both timeUnit and intervalValue
     } catch (e) {
       print('Error in onIntervalMinutesChanged: $e');
     }
   }
-
   Future<void> testOverlay() async {
     try {
       bool hasPermission = await FlutterOverlayWindow.isPermissionGranted();
@@ -270,19 +267,17 @@ class QuranSettingsController extends GetxController {
     try {
       // Update existing settings
       QuranSettingsCache.setMarkerColor(value: settingsModel.isMarkerColored);
-      QuranSettingsCache.setQuranFontSize(
-          fontSize: settingsModel.displayFontSize);
-      QuranSettingsCache.setQuranAdaptiveView(
-          isAdaptiveView: settingsModel.isAdaptiveView);
-      QuranSettingsCache.setWordByWordListen(
-          isWordByWord: settingsModel.wordByWordListen);
+      QuranSettingsCache.setQuranFontSize(fontSize: settingsModel.displayFontSize);
+      QuranSettingsCache.setQuranAdaptiveView(isAdaptiveView: settingsModel.isAdaptiveView);
+      QuranSettingsCache.setWordByWordListen(isWordByWord: settingsModel.wordByWordListen);
 
       // Update overlay settings with timing information
       await QuranOverlayCache.saveCurrentState(
         isEnabled: settingsModel.overlaySettings.isEnabled,
         isPageMode: settingsModel.overlaySettings.isPageMode,
         verseCount: settingsModel.overlaySettings.numberOfAyat,
-        interval: settingsModel.overlaySettings.intervalMinutes,
+        intervalValue: settingsModel.overlaySettings.intervalValue,
+        timeUnit: settingsModel.overlaySettings.timeUnit,
         lastVerseIndex: settingsModel.overlaySettings.lastDisplayedAyatIndex,
         lastPageNumber: settingsModel.overlaySettings.lastDisplayedPageNumber,
         lastOverlayTime: settingsModel.overlaySettings.lastOverlayTime,
@@ -301,7 +296,6 @@ class QuranSettingsController extends GetxController {
       print('Error in _updateSettingsCache: $e');
     }
   }
-
   // MARK: - Lifecycle Methods
   @override
   void onInit() {
@@ -318,31 +312,11 @@ class QuranSettingsController extends GetxController {
       settingsModel.wordByWordListen = QuranSettingsCache.isWordByWordListen();
 
       // Initialize overlay settings from cache
-      settingsModel.overlaySettings = QuranOverlaySettings(
-        isEnabled: QuranOverlayCache.isOverlayEnabled(),
-        isPageMode: QuranOverlayCache.isPageMode(),
-        numberOfAyat: QuranOverlayCache.getVerseCount(),
-        intervalMinutes: QuranOverlayCache.getInterval(),
-        lastDisplayedAyatIndex: QuranOverlayCache.getLastVerseIndex(),
-        lastDisplayedPageNumber: QuranOverlayCache.getLastPageNumber(),
-        lastOverlayTime: QuranOverlayCache.getLastOverlayTime(),
-      );
+      settingsModel.overlaySettings = QuranOverlayCache.getInitialSettings();
 
       // Set initial interval value and time unit
-      final minutes = settingsModel.overlaySettings.intervalMinutes;
-      if (minutes >= 24 * 60) {
-        selectedTimeUnit = TimeUnit.days;
-        _intervalValue = (minutes / (24 * 60)).round();
-      } else if (minutes >= 60) {
-        selectedTimeUnit = TimeUnit.hours;
-        _intervalValue = (minutes / 60).round();
-      } else if (minutes >= 1) {
-        selectedTimeUnit = TimeUnit.minutes;
-        _intervalValue = minutes;
-      } else {
-        selectedTimeUnit = TimeUnit.seconds;
-        _intervalValue = minutes * 60;
-      }
+      selectedTimeUnit = settingsModel.overlaySettings.timeUnit;
+      _intervalValue = settingsModel.overlaySettings.intervalValue;
 
       _overlayService = Get.put(QuranOverlayService());
 
@@ -400,7 +374,8 @@ class QuranSettingsController extends GetxController {
 class QuranOverlaySettings {
   int numberOfAyat;
   int numberOfPages;
-  int intervalMinutes;
+  int intervalValue;
+  TimeUnit timeUnit;
   bool isEnabled;
   bool isPageMode;
   int lastDisplayedAyatIndex;
@@ -410,7 +385,8 @@ class QuranOverlaySettings {
   QuranOverlaySettings({
     this.numberOfAyat = 5,
     this.numberOfPages = 1,
-    this.intervalMinutes = 10,
+    this.intervalValue = 10,
+    this.timeUnit = TimeUnit.minutes,
     this.isEnabled = false,
     this.isPageMode = false,
     this.lastDisplayedAyatIndex = 0,

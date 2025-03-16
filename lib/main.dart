@@ -466,7 +466,7 @@ class QuranPageOverlayView extends StatelessWidget {
           IconButton(
             onPressed: () async {
               await FlutterOverlayWindow.closeOverlay();
-              final controller = Get.find<QuranSettingsController>();
+              final controller = Get.put(QuranSettingsController());
               await controller.onOverlayClosed();
             },
             icon: const Icon(Icons.close),

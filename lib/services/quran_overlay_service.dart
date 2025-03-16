@@ -161,11 +161,11 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       _timer?.cancel();
 
       // Set up new timer
-      final settings =
-          Get.find<QuranSettingsController>().settingsModel.overlaySettings;
+      final settings = Get.find<QuranSettingsController>().settingsModel.overlaySettings;
+      final duration = settings.timeUnit.toDuration(settings.intervalValue);
       _timer = Timer.periodic(
-        Duration(minutes: settings.intervalMinutes),
-        (timer) async {
+        duration,
+            (timer) async {
           try {
             await showOverlay();
           } catch (e) {
@@ -183,7 +183,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       await QuranOverlayCache.setServiceActive(false);
     }
   }
-
   Future<void> stopService() async {
     try {
       // Cancel local timer

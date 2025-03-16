@@ -1,6 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawakkal/controllers/quran_settings_controller.dart';
 import 'package:tawakkal/services/shared_preferences_service.dart';
+import 'package:tawakkal/utils/time_units.dart';
 
 class QuranOverlayCache {
   static SharedPreferences get _prefs => SharedPreferencesService.instance.prefs;
@@ -11,8 +12,8 @@ class QuranOverlayCache {
   static const String _overlayEnabledKey = 'overlayEnabled';
   static const String _overlayPageModeKey = 'overlayPageMode';
   static const String _overlayVerseCountKey = 'overlayVerseCount';
-  static const String _overlayIntervalKey = 'overlayInterval';
-
+  static const String _intervalValueKey = 'overlayIntervalValue';
+  static const String _timeUnitKey = 'overlayTimeUnit';
   // New keys for background service
   static const String _lastOverlayTimeKey = 'lastOverlayTime';
   static const String _serviceActiveKey = 'serviceActive';
@@ -24,7 +25,9 @@ class QuranOverlayCache {
   static bool isOverlayEnabled() => _prefs.getBool(_overlayEnabledKey) ?? false;
   static bool isPageMode() => _prefs.getBool(_overlayPageModeKey) ?? false;
   static int getVerseCount() => _prefs.getInt(_overlayVerseCountKey) ?? 5;
-  static int getInterval() => _prefs.getInt(_overlayIntervalKey) ?? 10;
+  static int getIntervalValue() => _prefs.getInt(_intervalValueKey) ?? 10;
+  static String getTimeUnitString() => _prefs.getString(_timeUnitKey) ?? TimeUnit.minutes.name;
+  static TimeUnit getTimeUnit() => TimeUnit.values.firstWhere((e) => e.name == getTimeUnitString(), orElse: () => TimeUnit.minutes);
 
   // New getters for background service
   static DateTime? getLastOverlayTime() {
@@ -61,8 +64,8 @@ class QuranOverlayCache {
   static Future<bool> setVerseCount(int count) =>
       _prefs.setInt(_overlayVerseCountKey, count);
 
-  static Future<bool> setInterval(int minutes) =>
-      _prefs.setInt(_overlayIntervalKey, minutes);
+  static Future<bool> setIntervalValue(int value) => _prefs.setInt(_intervalValueKey, value);
+  static Future<bool> setTimeUnit(TimeUnit unit) => _prefs.setString(_timeUnitKey, unit.name);
 
   // New setters for background service
   static Future<bool> setLastOverlayTime(DateTime time) =>
@@ -82,7 +85,8 @@ class QuranOverlayCache {
       _prefs.remove(_overlayEnabledKey),
       _prefs.remove(_overlayPageModeKey),
       _prefs.remove(_overlayVerseCountKey),
-      _prefs.remove(_overlayIntervalKey),
+      _prefs.remove(_intervalValueKey),
+      _prefs.remove(_timeUnitKey),
       _prefs.remove(_lastOverlayTimeKey),
       _prefs.remove(_serviceActiveKey),
       _prefs.remove(_nextScheduledTimeKey),
@@ -97,7 +101,8 @@ class QuranOverlayCache {
       'enabled': isOverlayEnabled(),
       'pageMode': isPageMode(),
       'verseCount': getVerseCount(),
-      'interval': getInterval(),
+      'intervalValue': getIntervalValue(),
+      'timeUnit': getTimeUnitString(),
       'lastOverlayTime': getLastOverlayTime()?.toIso8601String(),
       'serviceActive': isServiceActive(),
       'nextScheduledTime': getNextScheduledTime()?.toIso8601String(),
@@ -117,8 +122,9 @@ class QuranOverlayCache {
   // New method to update next scheduled time
   static Future<void> _updateNextScheduledTime() async {
     final lastTime = getLastOverlayTime() ?? DateTime.now();
-    final interval = getInterval();
-    final nextTime = lastTime.add(Duration(minutes: interval));
+    final intervalValue = getIntervalValue();
+    final timeUnit = getTimeUnit();
+    final nextTime = lastTime.add(Duration(minutes: timeUnit.toMinutes(intervalValue)));
     await setNextScheduledTime(nextTime);
   }
 
@@ -127,7 +133,8 @@ class QuranOverlayCache {
     required bool isEnabled,
     required bool isPageMode,
     required int verseCount,
-    required int interval,
+    required int intervalValue,
+    required TimeUnit timeUnit,
     int? lastVerseIndex,
     int? lastPageNumber,
     DateTime? lastOverlayTime,
@@ -136,7 +143,8 @@ class QuranOverlayCache {
       setOverlayEnabled(isEnabled),
       setPageMode(isPageMode),
       setVerseCount(verseCount),
-      setInterval(interval),
+      setIntervalValue(intervalValue),
+      setTimeUnit(timeUnit),
       if (lastVerseIndex != null) setLastVerseIndex(lastVerseIndex),
       if (lastPageNumber != null) setLastPageNumber(lastPageNumber),
       if (lastOverlayTime != null) setLastOverlayTime(lastOverlayTime),
@@ -151,7 +159,8 @@ class QuranOverlayCache {
       isEnabled: isOverlayEnabled(),
       isPageMode: isPageMode(),
       numberOfAyat: getVerseCount(),
-      intervalMinutes: getInterval(),
+      intervalValue: getIntervalValue(),
+      timeUnit: getTimeUnit(),
       lastDisplayedAyatIndex: getLastVerseIndex(),
       lastDisplayedPageNumber: getLastPageNumber(),
     );
@@ -174,7 +183,8 @@ class QuranOverlayCache {
   // Updated validateSettings method
   static Future<void> validateSettings() async {
     final verseCount = getVerseCount();
-    final interval = getInterval();
+    final intervalValue = getIntervalValue();
+    final timeUnit = getTimeUnit();
     final pageMode = isPageMode();
     final lastPageNumber = getLastPageNumber();
 
@@ -182,8 +192,9 @@ class QuranOverlayCache {
     if (verseCount <= 0 || verseCount > 20) {
       await setVerseCount(5);
     }
-    if (interval <= 0 || interval > 60) {
-      await setInterval(10);
+    if (intervalValue <= 0) {
+      await setIntervalValue(10);
+      await setTimeUnit(TimeUnit.minutes);
     }
     if (lastPageNumber <= 0 || lastPageNumber > 604) {
       await setLastPageNumber(1);

@@ -271,7 +271,9 @@ class QuranSettingsView extends StatelessWidget {
           builder: (controller) {
             final bool isEnabled = controller.settingsModel.overlaySettings.isEnabled;
             final bool isPageMode = controller.settingsModel.overlaySettings.isPageMode;
-
+            print('isPageMode: $isPageMode');
+            print('isEnabled: $isEnabled');
+            print('selectedTimeUnit: ${controller.selectedTimeUnit}');
             return Column(
               children: [
                 // Enable/Disable Switch
@@ -393,37 +395,43 @@ class QuranSettingsView extends StatelessWidget {
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              SizedBox(
-                                width: 60,
-                                child: TextFormField(
-                                  initialValue: controller.getIntervalValue().toString(),
-                                  keyboardType: TextInputType.number,
-                                  textAlign: TextAlign.center,
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(horizontal: 8),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                              GetBuilder<QuranSettingsController>(
+                                id: 'intervalValue',
+                                builder: (controller) {
+                                  return SizedBox(
+                                    width: 60,
+                                    child: TextFormField(
+                                      initialValue: controller.getIntervalValue().toString(),
+                                      keyboardType: TextInputType.number,
+                                      textAlign: TextAlign.center,
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 8),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      onChanged: (value) {
+                                        final intValue = int.tryParse(value);
+                                        if (intValue != null && intValue > 0) {
+                                          controller.updateIntervalValue(intValue);
+                                        }
+                                      },
                                     ),
-                                  ),
-                                  onChanged: (value) {
-                                    final intValue = int.tryParse(value);
-                                    if (intValue != null && intValue > 0) {
-                                      controller.updateIntervalValue(intValue);
-                                    }
-                                  },
-                                ),
+                                  );
+                                },
                               ),
                               SizedBox(width: 8),
                               GetBuilder<QuranSettingsController>(
-                                id: 'timeUnit', // Add this ID
+                                id: 'timeUnit',
                                 builder: (controller) {
+                                  print('Building time unit dropdown. Current unit: ${controller.selectedTimeUnit}, interval: ${controller.getIntervalValue()}');
                                   return DropdownButton<TimeUnit>(
                                     value: controller.selectedTimeUnit,
                                     items: TimeUnit.values.map((unit) {
                                       return DropdownMenuItem<TimeUnit>(
                                         value: unit,
                                         child: Text(
-                                          controller.getIntervalValue() > 10 ? unit.pluralLabel : unit.label,
+                                          controller.getIntervalValue() > 1 ? unit.pluralLabel : unit.label,
                                         ),
                                       );
                                     }).toList(),
