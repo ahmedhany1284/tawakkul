@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
@@ -61,8 +62,12 @@ const String CHANNEL = "com.quran.khatma/overlay";
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await QuranOverlayCache.init();
+
   // Initialize background service
   await initializeBackgroundService();
+
+
 
   // Initialize storages
   await Future.wait([
@@ -158,7 +163,7 @@ class AppLifecycleObserver with WidgetsBindingObserver {
         }
         break;
       case AppLifecycleState.paused:
-        // App going to background, ensure service keeps running if enabled
+      // App going to background, ensure service keeps running if enabled
         if (settings.isEnabled) {
           final isRunning = await FlutterBackgroundService().isRunning();
           if (!isRunning) {
@@ -175,6 +180,7 @@ class AppLifecycleObserver with WidgetsBindingObserver {
 @pragma('vm:entry-point')
 void overlayMain() {
   WidgetsFlutterBinding.ensureInitialized();
+  Get.put(QuranSettingsController());
 
   FlutterOverlayWindow.overlayListener.listen((event) async {
     if (event != null) {
@@ -210,7 +216,6 @@ void overlayMain() {
     }
   });
 }
-
 class QuranOverlayView extends StatelessWidget {
   final List<Map<String, dynamic>> verses;
 
@@ -226,8 +231,8 @@ class QuranOverlayView extends StatelessWidget {
       child: SafeArea(
         child: Center(
           child: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width * 0.95, // Slightly smaller width
+            height: MediaQuery.of(context).size.height * 0.9, // Slightly smaller height
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.0),
@@ -244,10 +249,12 @@ class QuranOverlayView extends StatelessWidget {
                 _buildHeader(),
                 const Divider(height: 1),
                 Expanded(
-                  child: FittedBox(
-                    fit: BoxFit.fitHeight,
-                    child: Column(
-                      children: _buildQuranLines(verses),
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        children: _buildQuranLines(verses),
+                      ),
                     ),
                   ),
                 ),
@@ -264,9 +271,8 @@ class QuranOverlayView extends StatelessWidget {
     int currentSurah = -1;
 
     for (var verse in verses) {
-      // Check if this is a new surah
-      final surahNumber = verse['surahNumber'] as int? ?? -1;
-      final verseNumber = verse['verseNumber'] as int? ?? 0;
+      final surahNumber = verse['surah_number'] as int? ?? -1;
+      final verseNumber = verse['verse_number'] as int? ?? 0;
 
       if (surahNumber != currentSurah) {
         currentSurah = surahNumber;
@@ -300,31 +306,26 @@ class QuranOverlayView extends StatelessWidget {
         }
       }
 
-      // Add verse text
+      // Build verse using text_v1 from words
+      final words = (verse['words'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ?? [];
+
       lines.add(
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              style: const TextStyle(
-                height: 2.0,
-                fontFamily: 'QCF_P596',
-                fontSize: 28,
-                color: Colors.black,
-              ),
-              children: [
-                TextSpan(text: verse['text'] as String? ?? ''),
-                if (verse['wordType'] == 'end')
-                  TextSpan(
-                    text: ' ${verseNumber} ',
-                    style: const TextStyle(
-                      color: Colors.teal,
-                      fontSize: 22,
-                    ),
-                  ),
-              ],
-            ),
+          padding: const EdgeInsets.symmetric(vertical: 8.0),
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 2,
+            runSpacing: 2,
+            children: words.map((word) {
+              return Text(
+                word['text_v1'] as String? ?? '',
+                style: TextStyle(
+                  fontFamily: verse['fontFamily'] as String? ?? 'QCF_P003',
+                  fontSize: 32,
+                  color: Colors.black,
+                ),
+              );
+            }).toList(),
           ),
         ),
       );
@@ -360,9 +361,16 @@ class QuranOverlayView extends StatelessWidget {
           ),
           IconButton(
             onPressed: () async {
-              await FlutterOverlayWindow.closeOverlay();
-              final controller = Get.find<QuranSettingsController>();
-              await controller.onOverlayClosed();
+              try {
+                await FlutterOverlayWindow.closeOverlay();
+                // Send a message to the main app to update the overlay timing
+                await FlutterOverlayWindow.shareData({
+                  'type': 'overlay_closed',
+                  'timestamp': DateTime.now().toIso8601String(),
+                });
+              } catch (e) {
+                print('Error closing overlay: $e');
+              }
             },
             icon: const Icon(Icons.close),
             padding: EdgeInsets.zero,

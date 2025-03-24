@@ -4,8 +4,19 @@ import 'package:tawakkal/services/shared_preferences_service.dart';
 import 'package:tawakkal/utils/time_units.dart';
 
 class QuranOverlayCache {
-  static SharedPreferences get _prefs => SharedPreferencesService.instance.prefs;
-
+  static late SharedPreferences _prefs;
+  static Future<void> init() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+  static bool _ensureInitialized() {
+    try {
+      _prefs.getString(_timeUnitKey);
+      return true;
+    } catch (e) {
+      print('QuranOverlayCache not initialized');
+      return false;
+    }
+  }
   // Existing keys
   static const String _lastVerseIndexKey = 'lastDisplayedVerseIndex';
   static const String _lastPageNumberKey = 'lastDisplayedPageNumber';
@@ -20,7 +31,10 @@ class QuranOverlayCache {
   static const String _nextScheduledTimeKey = 'nextScheduledTime';
 
   // Existing getters
-  static int getLastVerseIndex() => _prefs.getInt(_lastVerseIndexKey) ?? 0;
+  static int getLastVerseIndex() {
+    if (!_ensureInitialized()) return 0;
+    return _prefs.getInt(_lastVerseIndexKey) ?? 0;
+  }
   static int getLastPageNumber() => _prefs.getInt(_lastPageNumberKey) ?? 1;
   static bool isOverlayEnabled() => _prefs.getBool(_overlayEnabledKey) ?? false;
   static bool isPageMode() => _prefs.getBool(_overlayPageModeKey) ?? false;
@@ -43,9 +57,15 @@ class QuranOverlayCache {
   }
 
   // Existing setters
-  static Future<bool> setLastVerseIndex(int index) =>
-      _prefs.setInt(_lastVerseIndexKey, index);
-
+  static Future<bool> setLastVerseIndex(int index) async {
+    if (!_ensureInitialized()) return false;
+    try {
+      return await _prefs.setInt(_lastVerseIndexKey, index);
+    } catch (e) {
+      print('Error setting last verse index: $e');
+      return false;
+    }
+  }
   static Future<bool> setLastPageNumber(int pageNumber) =>
       _prefs.setInt(_lastPageNumberKey, pageNumber);
 
@@ -213,6 +233,32 @@ class QuranOverlayCache {
         await setLastOverlayTime(DateTime.now());
         await _updateNextScheduledTime();
       }
+    }
+  }
+
+
+  static Future<void> saveServiceState(bool isEnabled) async {
+    if (!_ensureInitialized()) return;
+    try {
+      await Future.wait([
+        setOverlayEnabled(isEnabled),
+        setServiceActive(isEnabled),
+        setLastOverlayTime(DateTime.now()),
+      ]);
+    } catch (e) {
+      print('Error saving service state: $e');
+    }
+  }
+
+  static Future<bool> shouldRestoreService() async {
+    if (!_ensureInitialized()) return false;
+    try {
+      final isEnabled = isOverlayEnabled();
+      final isActive = isServiceActive();
+      return isEnabled && isActive;
+    } catch (e) {
+      print('Error checking service state: $e');
+      return false;
     }
   }
 }
