@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
@@ -10,12 +11,10 @@ import 'package:get/get.dart';
 import 'package:tawakkal/controllers/quran_reading_controller.dart';
 import 'package:tawakkal/controllers/quran_settings_controller.dart';
 import 'package:tawakkal/data/cache/quran_overlay_cache.dart';
-import 'package:tawakkal/data/cache/quran_settings_cache.dart';
 import 'package:tawakkal/data/models/quran_verse_model.dart';
-
-import 'dart:io';
-
 import 'package:tawakkal/utils/quran_utils.dart';
+
+Timer? timer;
 
 class QuranOverlayService extends GetxService with WidgetsBindingObserver {
   // Constants
@@ -25,10 +24,19 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
   static const int _totalVerses = 6236;
 
   // Static instance
-  static QuranOverlayService get instance => Get.find<QuranOverlayService>();
+  // static QuranOverlayService get instance => Get.find<QuranOverlayService>();
+
+  QuranOverlayService._privateConstructor();
+
+  // Singleton instance
+  static final QuranOverlayService _instance =
+      QuranOverlayService._privateConstructor();
+
+  // Getter for the instance
+  static QuranOverlayService get instance => _instance;
 
   // Properties
-  Timer? _timer;
+
   bool _isServiceEnabled = false;
   QuranReadingController? _quranController;
   final _overlayController = StreamController<List<String>>.broadcast();
@@ -64,6 +72,7 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       await _initializeBackgroundService();
       await _loadInitialState();
       await _checkPermission();
+      listenForOverlayClosure();
     } catch (e) {
       print('Error initializing service: $e');
     }
@@ -136,6 +145,57 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
     return true;
   }
 
+  void startPeriodicTimer() async {
+    print("Starting periodic timer for overlay.");
+    final settings =
+        Get.find<QuranSettingsController>().settingsModel.overlaySettings;
+    final duration = settings.timeUnit.toDuration(settings.intervalValue);
+
+    timer?.cancel(); // Cancel any existing timer before starting a new one
+    print("Starting periodic timer for overlay## ${settings.intervalValue}");
+    print("Starting periodic timer for overlay${duration}");
+
+    timer = Timer.periodic(duration, (timer) async {
+      if (await FlutterOverlayWindow.isActive()) {
+        print("Overlay is active, resetting timer.");
+
+        // Restart timer from zero after overlay closes
+        timer?.cancel();
+        startPeriodicTimer();
+        await waitForOverlayToClose();
+        // startPeriodicTimer(); // Restart after overlay closes
+        // return;
+      }
+
+      try {
+        print("Overlay closed. Restarting timer...");
+        await showOverlay(); // Show overlay after waiting
+        print("Overlay closed. Restarting ييييييييtimer...");
+        // Restart the timer AFTER the overlay is shown and closed
+        startPeriodicTimer();
+      } catch (e) {
+        print('Error showing overlay: $e');
+      }
+    });
+  }
+
+  void listenForOverlayClosure() {
+    print("Overlay manually closed. Restarting periodic timdddder.");
+    FlutterOverlayWindow.overlayListener.listen((event) {
+      print("Overlay manually closed. Restarting periodic timggggger.");
+      if (event != null && event['type'] == 'overlay_closed') {
+        print("Overlay manually closed. Restarting periodic timer.");
+        startPeriodicTimer();
+      }
+    });
+  }
+
+  Future<void> waitForOverlayToClose() async {
+    while (await FlutterOverlayWindow.isActive()) {
+      await Future.delayed(const Duration(seconds: 1));
+    }
+  }
+
   // MARK: - Service Control
   Future<void> startService() async {
     if (!await _ensurePermission()) return;
@@ -158,22 +218,29 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       }
 
       // Cancel existing timer if any
-      _timer?.cancel();
+      timer?.cancel();
 
-      // Set up new timer
-      final settings = Get.find<QuranSettingsController>().settingsModel.overlaySettings;
-      final duration = settings.timeUnit.toDuration(settings.intervalValue);
-      _timer = Timer.periodic(
-        duration,
-            (timer) async {
-          try {
-            await showOverlay();
-          } catch (e) {
-            print('Error showing overlay: $e');
-          }
-        },
-      );
+      // // Set up new timer
+      // final settings =
+      //     Get.find<QuranSettingsController>().settingsModel.overlaySettings;
+      // final duration = settings.timeUnit.toDuration(settings.intervalValue);
 
+      // _timer = Timer.periodic(
+      //   duration,
+      //   (timer) async {
+      //     if (await FlutterOverlayWindow.isActive()) {
+      //       // Overlay is active, so pause the timer by doing nothing
+      //       timer.cancel();
+      //       return;
+      //     }
+      //     try {
+      //       await showOverlay();
+      //     } catch (e) {
+      //       print('Error showing overlay: $e');
+      //     }
+      //   },
+      // );
+      startPeriodicTimer();
       // Show initial overlay after a delay
       await Future.delayed(const Duration(seconds: 1));
       await showOverlay();
@@ -183,11 +250,12 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       await QuranOverlayCache.setServiceActive(false);
     }
   }
+
   Future<void> stopService() async {
     try {
       // Cancel local timer
-      _timer?.cancel();
-      _timer = null;
+      timer?.cancel();
+      timer = null;
 
       // Close any active overlay
       if (await FlutterOverlayWindow.isActive()) {
@@ -214,7 +282,8 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
     if (!await _ensurePermission()) return;
 
     try {
-      final settings = Get.find<QuranSettingsController>().settingsModel.overlaySettings;
+      final settings =
+          Get.find<QuranSettingsController>().settingsModel.overlaySettings;
 
       if (settings.isPageMode) {
         // Get multiple pages if specified
@@ -227,7 +296,8 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
         // Fetch the requested number of pages
         for (int i = 0; i < settings.numberOfPages; i++) {
           int currentPage = startPage + i;
-          if (currentPage > 604) currentPage = currentPage - 604; // Wrap around to beginning
+          if (currentPage > 604)
+            currentPage = currentPage - 604; // Wrap around to beginning
 
           // Clear existing page data if any
           _quranController!.quranPages[currentPage - 1] = null;
@@ -246,28 +316,32 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
               'juz_number': pageData.juzNumber,
               'hizb_number': pageData.hizbNumber,
               'rub_el_hizb_number': pageData.rubElHizbNumber,
-              'verses': pageData.verses.map((verse) => {
-                'id': verse.id,
-                'verse_number': verse.verseNumber,
-                'verse_key': verse.verseKey,
-                'hizb_number': verse.hizbNumber,
-                'surah_number': verse.surahNumber,
-                'rub_el_hizb_number': verse.rubElhizbNumber,
-                'page_number': verse.pageNumber,
-                'juz_number': verse.juzNumber,
-                'text_uthmani_simple': verse.textUthmaniSimple,
-                'words': verse.words.map((word) => {
-                  'id': word.id,
-                  'verse_id': word.verseId,
-                  'word_type': word.wordType,
-                  'text_v1': word.textV1,
-                  'position': word.position,
-                  'text_uthmani': word.textUthmani,
-                  'page_number': word.pageNumber,
-                  'line_number': word.lineNumber,
-                  'surah_number': word.surahNumber,
-                }).toList(),
-              }).toList(),
+              'verses': pageData.verses
+                  .map((verse) => {
+                        'id': verse.id,
+                        'verse_number': verse.verseNumber,
+                        'verse_key': verse.verseKey,
+                        'hizb_number': verse.hizbNumber,
+                        'surah_number': verse.surahNumber,
+                        'rub_el_hizb_number': verse.rubElhizbNumber,
+                        'page_number': verse.pageNumber,
+                        'juz_number': verse.juzNumber,
+                        'text_uthmani_simple': verse.textUthmaniSimple,
+                        'words': verse.words
+                            .map((word) => {
+                                  'id': word.id,
+                                  'verse_id': word.verseId,
+                                  'word_type': word.wordType,
+                                  'text_v1': word.textV1,
+                                  'position': word.position,
+                                  'text_uthmani': word.textUthmani,
+                                  'page_number': word.pageNumber,
+                                  'line_number': word.lineNumber,
+                                  'surah_number': word.surahNumber,
+                                })
+                            .toList(),
+                      })
+                  .toList(),
             });
           }
         }
@@ -275,7 +349,8 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
         // Update last displayed page
         settings.lastDisplayedPageNumber =
             (startPage + settings.numberOfPages - 1) % 604;
-        await QuranOverlayCache.setLastPageNumber(settings.lastDisplayedPageNumber);
+        await QuranOverlayCache.setLastPageNumber(
+            settings.lastDisplayedPageNumber);
 
         if (pages.isNotEmpty) {
           await _showOverlayWindow();
@@ -304,7 +379,8 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
           settings.lastDisplayedAyatIndex = 0;
         }
 
-        await QuranOverlayCache.setLastVerseIndex(settings.lastDisplayedAyatIndex);
+        await QuranOverlayCache.setLastVerseIndex(
+            settings.lastDisplayedAyatIndex);
         await _showOverlayWindow();
 
         // Group verses by surah for better display
@@ -315,38 +391,43 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
 
         await FlutterOverlayWindow.shareData({
           'type': 'verses',
-          'data': versesToShow.map((verse) => {
-            'id': verse.id,
-            'verse_number': verse.verseNumber,
-            'verse_key': verse.verseKey,
-            'hizb_number': verse.hizbNumber,
-            'surah_number': verse.surahNumber,
-            'rub_el_hizb_number': verse.rubElhizbNumber,
-            'page_number': verse.pageNumber,
-            'juz_number': verse.juzNumber,
-            'text_uthmani_simple': verse.textUthmaniSimple,
-            'info': 'سورة ${_getSurahName(verse.surahNumber)} - آية ${verse.verseNumber}',
-            'wordType': verse.words.lastOrNull?.wordType ?? 'normal',
-            'isNewSurah': verse.verseNumber == 1,
-            'showBismillah': verse.verseNumber == 1 &&
-                verse.surahNumber != 1 &&
-                verse.surahNumber != 9,
-            'words': verse.words.map((word) => {
-              'id': word.id,
-              'verse_id': word.verseId,
-              'word_type': word.wordType,
-              'text_v1': word.textV1,
-              'position': word.position,
-              'text_uthmani': word.textUthmani,
-              'page_number': word.pageNumber,
-              'line_number': word.lineNumber,
-              'surah_number': word.surahNumber,
-            }).toList(),
-            'fontFamily': QuranUtils.getFontNameOfQuranPage(
-              pageNumber: verse.pageNumber,
-            ),
-            'surahName': _getSurahName(verse.surahNumber),
-          }).toList(),
+          'data': versesToShow
+              .map((verse) => {
+                    'id': verse.id,
+                    'verse_number': verse.verseNumber,
+                    'verse_key': verse.verseKey,
+                    'hizb_number': verse.hizbNumber,
+                    'surah_number': verse.surahNumber,
+                    'rub_el_hizb_number': verse.rubElhizbNumber,
+                    'page_number': verse.pageNumber,
+                    'juz_number': verse.juzNumber,
+                    'text_uthmani_simple': verse.textUthmaniSimple,
+                    'info':
+                        'سورة ${_getSurahName(verse.surahNumber)} - آية ${verse.verseNumber}',
+                    'wordType': verse.words.lastOrNull?.wordType ?? 'normal',
+                    'isNewSurah': verse.verseNumber == 1,
+                    'showBismillah': verse.verseNumber == 1 &&
+                        verse.surahNumber != 1 &&
+                        verse.surahNumber != 9,
+                    'words': verse.words
+                        .map((word) => {
+                              'id': word.id,
+                              'verse_id': word.verseId,
+                              'word_type': word.wordType,
+                              'text_v1': word.textV1,
+                              'position': word.position,
+                              'text_uthmani': word.textUthmani,
+                              'page_number': word.pageNumber,
+                              'line_number': word.lineNumber,
+                              'surah_number': word.surahNumber,
+                            })
+                        .toList(),
+                    'fontFamily': QuranUtils.getFontNameOfQuranPage(
+                      pageNumber: verse.pageNumber,
+                    ),
+                    'surahName': _getSurahName(verse.surahNumber),
+                  })
+              .toList(),
         });
       }
     } catch (e) {
@@ -354,11 +435,11 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
     }
   }
 
-
   String _getSurahName(int surahNumber) {
     // You might want to use a proper surah names list
     return "سورة $surahNumber";
   }
+
   Future<void> _showOverlayWindow() async {
     try {
       if (await FlutterOverlayWindow.isActive()) {
@@ -384,7 +465,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       }
     }
   }
-
 
   // MARK: - Background Service
   @pragma('vm:entry-point')
