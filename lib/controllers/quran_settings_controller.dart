@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:get/get.dart';
 import 'package:tawakkal/data/cache/quran_overlay_cache.dart';
+import 'package:tawakkal/main.dart';
 import 'package:tawakkal/services/quran_overlay_service.dart';
+
 import '../data/cache/quran_settings_cache.dart';
 import '../data/models/quran_settings_model.dart';
 import '../utils/time_units.dart';
@@ -27,7 +29,6 @@ class QuranSettingsController extends GetxController {
     }
   }
 
-
   void updateIntervalValue(int value) {
     try {
       _intervalValue = value;
@@ -38,11 +39,11 @@ class QuranSettingsController extends GetxController {
     }
   }
 
-
   void updateTimeUnit(TimeUnit unit, {int? newValue}) {
     try {
       print('Updating time unit to: $unit');
-      print('Before update: selectedTimeUnit = $selectedTimeUnit, _intervalValue = $_intervalValue');
+      print(
+          'Before update: selectedTimeUnit = $selectedTimeUnit, _intervalValue = $_intervalValue');
 
       // If a new value is provided, use it; otherwise, use the current value
       int valueToUse = newValue ?? _intervalValue;
@@ -53,15 +54,18 @@ class QuranSettingsController extends GetxController {
 
       // Set the new interval value
       _intervalValue = valueToUse;
-      print('After setting new interval value: _intervalValue = $_intervalValue');
+      print(
+          'After setting new interval value: _intervalValue = $_intervalValue');
 
       // Convert the new value to minutes and update the settings
       final minutes = selectedTimeUnit.toMinutes(valueToUse);
       onIntervalMinutesChanged(minutes);
 
-      print('Before calling update: selectedTimeUnit = $selectedTimeUnit, _intervalValue = $_intervalValue');
+      print(
+          'Before calling update: selectedTimeUnit = $selectedTimeUnit, _intervalValue = $_intervalValue');
       update(['timeUnit', 'intervalValue']);
-      print('After calling update: selectedTimeUnit = $selectedTimeUnit, _intervalValue = $_intervalValue');
+      print(
+          'After calling update: selectedTimeUnit = $selectedTimeUnit, _intervalValue = $_intervalValue');
 
       Get.forceAppUpdate(); // Force a full UI update
     } catch (e) {
@@ -102,7 +106,7 @@ class QuranSettingsController extends GetxController {
 
       // If service is enabled, ensure it's running
       if (settingsModel.overlaySettings.isEnabled) {
-        _overlayService.updateServiceState(true);
+        overlayService.updateServiceState(true);
       }
     } catch (e) {
       print('Error in onOverlayClosed: $e');
@@ -125,7 +129,7 @@ class QuranSettingsController extends GetxController {
           settingsModel.overlaySettings.lastDisplayedAyatIndex = 0;
           settingsModel.overlaySettings.lastDisplayedPageNumber = 0;
           await QuranOverlayCache.updateOverlayTiming();
-          await _overlayService.startService();
+          await overlayService.startService();
         } else {
           Get.snackbar(
             'تنبيه',
@@ -136,7 +140,7 @@ class QuranSettingsController extends GetxController {
         }
       } else {
         settingsModel.overlaySettings.isEnabled = false;
-        await _overlayService.stopService();
+        await overlayService.stopService();
       }
 
       await _updateSettingsCache();
@@ -160,9 +164,9 @@ class QuranSettingsController extends GetxController {
 
       // Restart service if it's running
       if (settingsModel.overlaySettings.isEnabled) {
-        await _overlayService.stopService();
+        await overlayService.stopService();
         await Future.delayed(const Duration(milliseconds: 500));
-        await _overlayService.startService();
+        await overlayService.startService();
       }
 
       await _updateSettingsCache();
@@ -181,9 +185,9 @@ class QuranSettingsController extends GetxController {
       // Restart service if it's running and in ayat mode
       if (settingsModel.overlaySettings.isEnabled &&
           !settingsModel.overlaySettings.isPageMode) {
-        await _overlayService.stopService();
+        await overlayService.stopService();
         await Future.delayed(const Duration(milliseconds: 500));
-        await _overlayService.startService();
+        await overlayService.startService();
       }
 
       await _updateSettingsCache();
@@ -192,7 +196,6 @@ class QuranSettingsController extends GetxController {
       print('Error in onNumberOfAyatChanged: $e');
     }
   }
-
 
   void onIntervalMinutesChanged(int minutes) async {
     try {
@@ -214,17 +217,21 @@ class QuranSettingsController extends GetxController {
 
       // Restart service if it's running
       if (settingsModel.overlaySettings.isEnabled) {
-        await _overlayService.stopService();
+        await overlayService.stopService();
         await Future.delayed(const Duration(milliseconds: 500));
-        await _overlayService.startService();
+        await overlayService.startService();
       }
 
       await _updateSettingsCache();
-      update(['timeUnit', 'intervalValue']); // Update both timeUnit and intervalValue
+      update([
+        'timeUnit',
+        'intervalValue'
+      ]); // Update both timeUnit and intervalValue
     } catch (e) {
       print('Error in onIntervalMinutesChanged: $e');
     }
   }
+
   Future<void> testOverlay() async {
     try {
       bool hasPermission = await FlutterOverlayWindow.isPermissionGranted();
@@ -251,7 +258,7 @@ class QuranSettingsController extends GetxController {
       }
 
       // Don't update timing for test overlay
-      await _overlayService.showOverlay();
+      await overlayService.showOverlay();
     } catch (e) {
       print('Error in testOverlay: $e');
       Get.snackbar(
@@ -267,9 +274,12 @@ class QuranSettingsController extends GetxController {
     try {
       // Update existing settings
       QuranSettingsCache.setMarkerColor(value: settingsModel.isMarkerColored);
-      QuranSettingsCache.setQuranFontSize(fontSize: settingsModel.displayFontSize);
-      QuranSettingsCache.setQuranAdaptiveView(isAdaptiveView: settingsModel.isAdaptiveView);
-      QuranSettingsCache.setWordByWordListen(isWordByWord: settingsModel.wordByWordListen);
+      QuranSettingsCache.setQuranFontSize(
+          fontSize: settingsModel.displayFontSize);
+      QuranSettingsCache.setQuranAdaptiveView(
+          isAdaptiveView: settingsModel.isAdaptiveView);
+      QuranSettingsCache.setWordByWordListen(
+          isWordByWord: settingsModel.wordByWordListen);
 
       // Update overlay settings with timing information
       await QuranOverlayCache.saveCurrentState(
@@ -296,6 +306,7 @@ class QuranSettingsController extends GetxController {
       print('Error in _updateSettingsCache: $e');
     }
   }
+
   // MARK: - Lifecycle Methods
   @override
   void onInit() {
@@ -318,17 +329,17 @@ class QuranSettingsController extends GetxController {
       selectedTimeUnit = settingsModel.overlaySettings.timeUnit;
       _intervalValue = settingsModel.overlaySettings.intervalValue;
 
-      _overlayService = Get.put(QuranOverlayService());
+      // _overlayService = Get.put(QuranOverlayService());
 
       // Start service if enabled and we have permission
       if (settingsModel.overlaySettings.isEnabled) {
         if (Platform.isAndroid) {
           bool hasPermission = await FlutterOverlayWindow.isPermissionGranted();
           if (hasPermission) {
-            await _overlayService.startService();
+            await overlayService.startService();
           }
         } else {
-          await _overlayService.startService();
+          await overlayService.startService();
         }
       }
 
@@ -351,6 +362,7 @@ class QuranSettingsController extends GetxController {
     }
     return true;
   }
+
   void onNumberOfPagesChanged(int value) async {
     try {
       settingsModel.overlaySettings.numberOfPages = value;
@@ -358,9 +370,9 @@ class QuranSettingsController extends GetxController {
       // Restart service if it's running and in page mode
       if (settingsModel.overlaySettings.isEnabled &&
           settingsModel.overlaySettings.isPageMode) {
-        await _overlayService.stopService();
+        await overlayService.stopService();
         await Future.delayed(const Duration(milliseconds: 500));
-        await _overlayService.startService();
+        await overlayService.startService();
       }
 
       await _updateSettingsCache();
