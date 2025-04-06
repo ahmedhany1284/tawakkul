@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:audio_service/audio_service.dart';
@@ -8,27 +7,18 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:tawakkal/constants/constants.dart';
 import 'package:tawakkal/controllers/quran_reading_controller.dart';
 import 'package:tawakkal/controllers/quran_settings_controller.dart';
 import 'package:tawakkal/data/cache/app_settings_cache.dart';
-
-import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:tawakkal/data/cache/quran_overlay_cache.dart';
-import 'package:tawakkal/data/models/quran_verse_model.dart';
 import 'package:tawakkal/services/quran_overlay_service.dart';
 import 'package:tawakkal/widgets/app_custom_image_view.dart';
+
 import 'constants/themes.dart';
 import 'routes/app_pages.dart';
 import 'services/shared_preferences_service.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
-import 'package:flutter_overlay_window/flutter_overlay_window.dart';
 
 // Background service initialization
 @pragma('vm:entry-point')
@@ -58,7 +48,7 @@ Future<void> initializeBackgroundService() async {
 }
 
 const String CHANNEL = "com.quran.khatma/overlay";
-
+final overlayService = QuranOverlayService.instance;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -66,8 +56,6 @@ void main() async {
 
   // Initialize background service
   await initializeBackgroundService();
-
-
 
   // Initialize storages
   await Future.wait([
@@ -88,7 +76,7 @@ void main() async {
   Get.put(quranReadingController);
 
   // Initialize and configure overlay service
-  final overlayService = QuranOverlayService();
+
   await overlayService.initializeService();
   Get.put(overlayService, permanent: true);
 
@@ -163,7 +151,7 @@ class AppLifecycleObserver with WidgetsBindingObserver {
         }
         break;
       case AppLifecycleState.paused:
-      // App going to background, ensure service keeps running if enabled
+        // App going to background, ensure service keeps running if enabled
         if (settings.isEnabled) {
           final isRunning = await FlutterBackgroundService().isRunning();
           if (!isRunning) {
@@ -183,16 +171,26 @@ void overlayMain() {
   Get.put(QuranSettingsController());
 
   FlutterOverlayWindow.overlayListener.listen((event) async {
+    if (event == 'overlay_closed') {
+      timer?.cancel();
+      return;
+    }
     if (event != null) {
       try {
         if (event['type'] == 'verses') {
           final verses = List<Map<String, dynamic>>.from(event['data']);
           runApp(
-            MaterialApp(
-              debugShowCheckedModeBanner: false,
-              home: Directionality(
-                textDirection: TextDirection.rtl,
-                child: QuranOverlayView(verses: verses),
+            WillPopScope(
+              onWillPop: () async {
+                overlayService.startPeriodicTimer();
+                return false; // Prevents the app from closing
+              },
+              child: MaterialApp(
+                debugShowCheckedModeBanner: false,
+                home: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: QuranOverlayView(verses: verses),
+                ),
               ),
             ),
           );
@@ -216,6 +214,7 @@ void overlayMain() {
     }
   });
 }
+
 class QuranOverlayView extends StatelessWidget {
   final List<Map<String, dynamic>> verses;
 
@@ -231,8 +230,10 @@ class QuranOverlayView extends StatelessWidget {
       child: SafeArea(
         child: Center(
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.95, // Slightly smaller width
-            height: MediaQuery.of(context).size.height * 0.9, // Slightly smaller height
+            width: MediaQuery.of(context).size.width *
+                0.95, // Slightly smaller width
+            height: MediaQuery.of(context).size.height *
+                0.9, // Slightly smaller height
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12.0),
@@ -307,7 +308,9 @@ class QuranOverlayView extends StatelessWidget {
       }
 
       // Build verse using text_v1 from words
-      final words = (verse['words'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ?? [];
+      final words =
+          (verse['words'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ??
+              [];
 
       lines.add(
         Padding(
@@ -333,6 +336,7 @@ class QuranOverlayView extends StatelessWidget {
 
     return lines;
   }
+
   Widget _buildHeader() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -362,12 +366,22 @@ class QuranOverlayView extends StatelessWidget {
           IconButton(
             onPressed: () async {
               try {
+                // timer?.cancel();
+                await QuranOverlayCache.init();
+                await QuranOverlayCache.updateOverlayTiming();
+
                 await FlutterOverlayWindow.closeOverlay();
                 // Send a message to the main app to update the overlay timing
-                await FlutterOverlayWindow.shareData({
-                  'type': 'overlay_closed',
-                  'timestamp': DateTime.now().toIso8601String(),
-                });
+
+                try {
+                  bool shared = await FlutterOverlayWindow.shareData({
+                    'type': 'overlay_closed',
+                    'timestamp': DateTime.now().toIso8601String(),
+                  });
+                  print("Event shared: $shared");
+                } catch (e) {
+                  print('Error sharing data: $e');
+                }
               } catch (e) {
                 print('Error closing overlay: $e');
               }
@@ -449,7 +463,6 @@ class QuranPageOverlayView extends StatelessWidget {
       height: 1005,
     );
   }
-
 
   Widget _buildHeader() {
     return Container(
