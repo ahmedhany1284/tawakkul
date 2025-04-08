@@ -14,17 +14,13 @@ import 'package:tawakkal/data/cache/quran_overlay_cache.dart';
 import 'package:tawakkal/data/models/quran_verse_model.dart';
 import 'package:tawakkal/utils/quran_utils.dart';
 
-Timer? timer;
-
 class QuranOverlayService extends GetxService with WidgetsBindingObserver {
   // Constants
   static const String NOTIFICATION_CHANNEL_ID = 'quran_overlay_channel';
   static const int NOTIFICATION_ID = 888;
   static const platform = MethodChannel('com.quran.khatma/overlay');
   static const int _totalVerses = 6236;
-
-  // Static instance
-  // static QuranOverlayService get instance => Get.find<QuranOverlayService>();
+  static Timer? timer;
 
   QuranOverlayService._privateConstructor();
 
@@ -147,37 +143,48 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
 
   void startPeriodicTimer() async {
     print("Starting periodic timer for overlay.");
-    final settings =
-        Get.find<QuranSettingsController>().settingsModel.overlaySettings;
+    final settings = QuranOverlayCache.getInitialSettings();
     final duration = settings.timeUnit.toDuration(settings.intervalValue);
 
-    timer?.cancel(); // Cancel any existing timer before starting a new one
-    print("Starting periodic timer for overlay## ${settings.intervalValue}");
-    print("Starting periodic timer for overlay${duration}");
+    // Cancel existing timer if any
+    timer?.cancel();
 
-    timer = Timer.periodic(duration, (timer) async {
-      if (await FlutterOverlayWindow.isActive()) {
-        print("Overlay is active, resetting timer.");
+    print("Timer settings - Interval: ${settings.intervalValue}");
+    print("Timer settings - Duration: ${duration}");
 
-        // Restart timer from zero after overlay closes
+    // First, check if overlay is active
+    if (await FlutterOverlayWindow.isActive()) {
+      print("Overlay is currently active, waiting for it to close...");
+     return;
+    }
+
+    // Start the timer after ensuring overlay is closed
+    print("Starting new timer after overlay closure");
+    timer = Timer.periodic(duration, (timer2) async {
+      try {
+
+        if (await FlutterOverlayWindow.isActive()) {
+          print("Overlay became active, pausing timer...");
+          timer2.cancel();
+          startPeriodicTimer();
+          return;
+        }
+
+        // Show overlay if timer completed and overlay isn't active
+        print("Timer completed, showing overlay...");
+        await showOverlay();
+
+        // Cancel current timer and start a new one after showing overlay
         timer?.cancel();
         startPeriodicTimer();
-        await waitForOverlayToClose();
-        // startPeriodicTimer(); // Restart after overlay closes
-        // return;
-      }
-
-      try {
-        print("Overlay closed. Restarting timer...");
-        await showOverlay(); // Show overlay after waiting
-        print("Overlay closed. Restarting ييييييييtimer...");
-        // Restart the timer AFTER the overlay is shown and closed
-        startPeriodicTimer();
       } catch (e) {
-        print('Error showing overlay: $e');
+        print('Error in periodic timer: $e');
+        timer?.cancel();
+        startPeriodicTimer(); // Attempt to recover from error
       }
     });
   }
+
 
   void listenForOverlayClosure() {
     print("Overlay manually closed. Restarting periodic timdddder.");
@@ -190,11 +197,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
     });
   }
 
-  Future<void> waitForOverlayToClose() async {
-    while (await FlutterOverlayWindow.isActive()) {
-      await Future.delayed(const Duration(seconds: 1));
-    }
-  }
 
   // MARK: - Service Control
   Future<void> startService() async {
@@ -220,26 +222,6 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       // Cancel existing timer if any
       timer?.cancel();
 
-      // // Set up new timer
-      // final settings =
-      //     Get.find<QuranSettingsController>().settingsModel.overlaySettings;
-      // final duration = settings.timeUnit.toDuration(settings.intervalValue);
-
-      // _timer = Timer.periodic(
-      //   duration,
-      //   (timer) async {
-      //     if (await FlutterOverlayWindow.isActive()) {
-      //       // Overlay is active, so pause the timer by doing nothing
-      //       timer.cancel();
-      //       return;
-      //     }
-      //     try {
-      //       await showOverlay();
-      //     } catch (e) {
-      //       print('Error showing overlay: $e');
-      //     }
-      //   },
-      // );
       startPeriodicTimer();
       // Show initial overlay after a delay
       await Future.delayed(const Duration(seconds: 1));
@@ -358,6 +340,10 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
             'type': 'pages',
             'data': pages,
           });
+          await FlutterOverlayWindow.shareData({
+            'type': 'pages',
+            'data': pages,
+          });
         }
       } else {
         // Get multiple verses if specified
@@ -435,6 +421,51 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
     }
   }
 
+  Future<void> closeOverlay() async {
+    try {
+      print('Attempting to close overlay...');
+
+      // Check if overlay is active
+      final bool? isActive = await FlutterOverlayWindow.isActive();
+      if (isActive != true) {
+        print('Overlay is not active, nothing to close');
+        return;
+      }
+
+      // Share data BEFORE closing the overlay
+      // try {
+      //   print('Sharing closing data...');
+      //   await FlutterOverlayWindow.shareData({
+      //     'type': 'overlay_closed',
+      //     'timestamp': DateTime.now().toIso8601String(),
+      //   });
+      //
+      //   // Add a small delay to ensure data is shared
+      //   await Future.delayed(const Duration(milliseconds: 200));
+      //   print('Successfully shared closing data');
+      // } catch (shareError) {
+      //   print('Error sharing closing data: $shareError');
+      // }
+
+      // Then close the overlay
+      try {
+        print('Closing overlay window...');
+        await FlutterOverlayWindow.closeOverlay();
+        print('Successfully closed overlay window');
+
+        // Update last overlay time
+        await QuranOverlayCache.setLastOverlayTime(DateTime.now());
+
+        // Restart the periodic timer
+        startPeriodicTimer();
+      } catch (closeError) {
+        print('Error closing overlay window: $closeError');
+      }
+    } catch (e) {
+      print('Fatal error in closeOverlay: $e');
+    }
+  }
+
   String _getSurahName(int surahNumber) {
     // You might want to use a proper surah names list
     return "سورة $surahNumber";
@@ -474,10 +505,10 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
     try {
       if (service is AndroidServiceInstance) {
         // Set initial notification
-        service.setForegroundNotificationInfo(
-          title: 'تذكير القرآن',
-          content: 'جاري تشغيل خدمة التذكير',
-        );
+        // service.setForegroundNotificationInfo(
+        //   title: 'تذكير القرآن',
+        //   content: 'جاري تشغيل خدمة التذكير',
+        // );
 
         // Handle stop service request
         service.on('stopService').listen((event) {
@@ -490,22 +521,22 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       }
 
       // Use a more reliable timer mechanism
-      const duration = Duration(minutes: 1);
-      Timer.periodic(duration, (timer) async {
-        try {
-          if (!QuranOverlayCache.isOverlayEnabled()) {
-            timer.cancel();
-            return;
-          }
-
-          if (QuranOverlayCache.isTimeForNextOverlay()) {
-            final instance = Get.find<QuranOverlayService>();
-            await instance.showOverlay();
-          }
-        } catch (e) {
-          print('Error in background timer: $e');
-        }
-      });
+      // const duration = Duration(minutes: 1);
+      // Timer.periodic(duration, (timer) async {
+      //   try {
+      //     if (!QuranOverlayCache.isOverlayEnabled()) {
+      //       timer.cancel();
+      //       return;
+      //     }
+      //
+      //     if (QuranOverlayCache.isTimeForNextOverlay()) {
+      //       final instance = Get.find<QuranOverlayService>();
+      //       await instance.showOverlay();
+      //     }
+      //   } catch (e) {
+      //     print('Error in background timer: $e');
+      //   }
+      // });
     } catch (e) {
       print('Error in background service: $e');
     }

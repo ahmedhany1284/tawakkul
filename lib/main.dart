@@ -49,6 +49,7 @@ Future<void> initializeBackgroundService() async {
 
 const String CHANNEL = "com.quran.khatma/overlay";
 final overlayService = QuranOverlayService.instance;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -169,47 +170,51 @@ class AppLifecycleObserver with WidgetsBindingObserver {
 void overlayMain() {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(QuranSettingsController());
+  Get.put(QuranOverlayCache());
 
   FlutterOverlayWindow.overlayListener.listen((event) async {
-    if (event == 'overlay_closed') {
-      timer?.cancel();
-      return;
-    }
+    print('Received overlay event: $event');
+
     if (event != null) {
       try {
-        if (event['type'] == 'verses') {
-          final verses = List<Map<String, dynamic>>.from(event['data']);
-          runApp(
-            WillPopScope(
-              onWillPop: () async {
-                overlayService.startPeriodicTimer();
-                return false; // Prevents the app from closing
-              },
-              child: MaterialApp(
+        switch(event['type']) {
+          case 'verses':
+            final verses = List<Map<String, dynamic>>.from(event['data']);
+            runApp(
+              MaterialApp(
                 debugShowCheckedModeBanner: false,
                 home: Directionality(
                   textDirection: TextDirection.rtl,
                   child: QuranOverlayView(verses: verses),
                 ),
               ),
-            ),
-          );
-        } else if (event['type'] == 'pages') {
-          // Changed from 'page' to 'pages'
-          final pages = List<Map<String, dynamic>>.from(event['data']);
-          runApp(
-            MaterialApp(
-              debugShowCheckedModeBanner: false,
-              home: Directionality(
-                textDirection: TextDirection.rtl,
-                child: QuranPageOverlayView(
-                    pages: pages), // Updated to use pages parameter
+            );
+            break;
+
+          case 'pages':
+            final pages = List<Map<String, dynamic>>.from(event['data']);
+            runApp(
+              MaterialApp(
+                debugShowCheckedModeBanner: false,
+                home: Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: QuranPageOverlayView(pages: pages),
+                ),
               ),
-            ),
-          );
+            );
+            break;
+
+          case 'overlay_closed':
+            print('Overlay closed at: ${event['timestamp']}');
+            // Handle overlay closure
+            overlayService.startPeriodicTimer();
+            break;
+
+          default:
+            print('Unknown event type: ${event['type']}');
         }
       } catch (e) {
-        print('Error in overlay: $e');
+        print('Error handling overlay event: $e');
       }
     }
   });
@@ -366,22 +371,9 @@ class QuranOverlayView extends StatelessWidget {
           IconButton(
             onPressed: () async {
               try {
-                // timer?.cancel();
                 await QuranOverlayCache.init();
                 await QuranOverlayCache.updateOverlayTiming();
-
-                await FlutterOverlayWindow.closeOverlay();
-                // Send a message to the main app to update the overlay timing
-
-                try {
-                  bool shared = await FlutterOverlayWindow.shareData({
-                    'type': 'overlay_closed',
-                    'timestamp': DateTime.now().toIso8601String(),
-                  });
-                  print("Event shared: $shared");
-                } catch (e) {
-                  print('Error sharing data: $e');
-                }
+                await overlayService.closeOverlay();
               } catch (e) {
                 print('Error closing overlay: $e');
               }
