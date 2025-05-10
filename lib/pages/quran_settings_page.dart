@@ -2,7 +2,6 @@ import 'package:arabic_numbers/arabic_numbers.dart';
 import 'package:fluentui_system_icons/fluentui_system_icons.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-
 import 'package:get/get.dart';
 import 'package:tawakkal/constants/constants.dart';
 import 'package:tawakkal/data/cache/quran_overlay_cache.dart';
@@ -11,6 +10,7 @@ import 'package:tawakkal/routes/app_pages.dart';
 import 'package:tawakkal/utils/sheets/sheet_methods.dart';
 import 'package:tawakkal/utils/time_units.dart';
 import 'package:tawakkal/widgets/custom_container.dart';
+
 import '../controllers/quran_audio_player_controller.dart';
 import '../controllers/quran_settings_controller.dart';
 
@@ -269,11 +269,13 @@ class QuranSettingsView extends StatelessWidget {
         ),
         GetBuilder<QuranSettingsController>(
           builder: (controller) {
-            final bool isEnabled = controller.settingsModel.overlaySettings.isEnabled;
+            final settings = QuranOverlayCache.getInitialSettings();
+
+            final bool isEnabled = QuranOverlayCache.isOverlayEnabled();
             final bool isPageMode = controller.settingsModel.overlaySettings.isPageMode;
             print('isPageMode: $isPageMode');
             print('isEnabled: $isEnabled');
-            print('selectedTimeUnit: ${controller.selectedTimeUnit}');
+            print('selectedTimeUnit: ${QuranOverlayCache.isOverlayEnabled()}');
             return Column(
               children: [
                 // Enable/Disable Switch
@@ -289,7 +291,9 @@ class QuranSettingsView extends StatelessWidget {
                   ),
                   value: isEnabled,
                   onChanged: (value) async {
+                    print('Switch value changed: $value');
                     await controller.onOverlayEnabledChanged(value);
+                    print('Overlay enabled: ${QuranOverlayCache.isOverlayEnabled()}');
                   },
                 ),
                 IgnorePointer(

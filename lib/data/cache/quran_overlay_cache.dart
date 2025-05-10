@@ -1,6 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tawakkal/controllers/quran_settings_controller.dart';
-import 'package:tawakkal/services/shared_preferences_service.dart';
 import 'package:tawakkal/utils/time_units.dart';
 
 class QuranOverlayCache {
@@ -36,7 +35,9 @@ class QuranOverlayCache {
     return _prefs.getInt(_lastVerseIndexKey) ?? 0;
   }
   static int getLastPageNumber() => _prefs.getInt(_lastPageNumberKey) ?? 1;
-  static bool isOverlayEnabled() => _prefs.getBool(_overlayEnabledKey) ?? false;
+  static bool isOverlayEnabled()  {
+    print('Overlay enabled: ${_prefs.getBool(_overlayEnabledKey)}');
+    return _prefs.getBool(_overlayEnabledKey)??false;}
   static bool isPageMode() => _prefs.getBool(_overlayPageModeKey) ?? false;
   static int getVerseCount() => _prefs.getInt(_overlayVerseCountKey) ?? 5;
   static int getIntervalValue() => _prefs.getInt(_intervalValueKey) ?? 10;
@@ -69,8 +70,12 @@ class QuranOverlayCache {
   static Future<bool> setLastPageNumber(int pageNumber) =>
       _prefs.setInt(_lastPageNumberKey, pageNumber);
 
-  static Future<bool> setOverlayEnabled(bool enabled) =>
-      _prefs.setBool(_overlayEnabledKey, enabled);
+  static Future<bool> setOverlayEnabled(bool enabled)async
+    {final result=await  _prefs.setBool(_overlayEnabledKey, enabled);
+    print('Overlay enabled: $enabled  $result');
+    print('Overlay enabljjjjjed: ${_prefs.getBool(_overlayEnabledKey)}');
+    return result;
+    }
 
   static Future<bool> setPageMode(bool pageMode) async {
     if (pageMode) {

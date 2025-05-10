@@ -67,7 +67,7 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       _quranController = Get.find<QuranReadingController>();
       await _initializeBackgroundService();
       await _loadInitialState();
-      await _checkPermission();
+      // await _checkPermission();
       listenForOverlayClosure();
     } catch (e) {
       print('Error initializing service: $e');
@@ -254,7 +254,7 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       // Update state
       _isServiceEnabled = false;
       await QuranOverlayCache.setServiceActive(false);
-      await QuranOverlayCache.setOverlayEnabled(false);
+      // await QuranOverlayCache.setOverlayEnabled(false);
     } catch (e) {
       print('Error stopping service: $e');
     }
@@ -521,22 +521,22 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       }
 
       // Use a more reliable timer mechanism
-      // const duration = Duration(minutes: 1);
-      // Timer.periodic(duration, (timer) async {
-      //   try {
-      //     if (!QuranOverlayCache.isOverlayEnabled()) {
-      //       timer.cancel();
-      //       return;
-      //     }
-      //
-      //     if (QuranOverlayCache.isTimeForNextOverlay()) {
-      //       final instance = Get.find<QuranOverlayService>();
-      //       await instance.showOverlay();
-      //     }
-      //   } catch (e) {
-      //     print('Error in background timer: $e');
-      //   }
-      // });
+      const duration = Duration(minutes: 1);
+      Timer.periodic(duration, (timer) async {
+        try {
+          if (!QuranOverlayCache.isOverlayEnabled()) {
+            timer.cancel();
+            return;
+          }
+      
+          if (QuranOverlayCache.isTimeForNextOverlay()) {
+            final instance = Get.find<QuranOverlayService>();
+            await instance.showOverlay();
+          }
+        } catch (e) {
+          print('Error in background timer: $e');
+        }
+      });
     } catch (e) {
       print('Error in background service: $e');
     }

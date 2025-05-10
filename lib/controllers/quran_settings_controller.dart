@@ -280,7 +280,7 @@ class QuranSettingsController extends GetxController {
           isAdaptiveView: settingsModel.isAdaptiveView);
       QuranSettingsCache.setWordByWordListen(
           isWordByWord: settingsModel.wordByWordListen);
-
+print('Settings updated in cache${settingsModel.overlaySettings.isEnabled}');
       // Update overlay settings with timing information
       await QuranOverlayCache.saveCurrentState(
         isEnabled: settingsModel.overlaySettings.isEnabled,
