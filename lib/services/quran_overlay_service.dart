@@ -450,6 +450,8 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
       // Then close the overlay
       try {
         print('Closing overlay window...');
+        await FlutterOverlayWindow.shareData({'closeOverLay':true});
+
         await FlutterOverlayWindow.closeOverlay();
         print('Successfully closed overlay window');
 
@@ -457,7 +459,9 @@ class QuranOverlayService extends GetxService with WidgetsBindingObserver {
         await QuranOverlayCache.setLastOverlayTime(DateTime.now());
 
         // Restart the periodic timer
+
         startPeriodicTimer();
+
       } catch (closeError) {
         print('Error closing overlay window: $closeError');
       }

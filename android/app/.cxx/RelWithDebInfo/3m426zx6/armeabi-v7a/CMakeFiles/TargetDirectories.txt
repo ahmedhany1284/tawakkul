@@ -1,0 +1,2 @@
+/Users/ahmedhany/Documents/tawakul/tawakkul/android/app/.cxx/RelWithDebInfo/3m426zx6/armeabi-v7a/CMakeFiles/edit_cache.dir
+/Users/ahmedhany/Documents/tawakul/tawakkul/android/app/.cxx/RelWithDebInfo/3m426zx6/armeabi-v7a/CMakeFiles/rebuild_cache.dir
